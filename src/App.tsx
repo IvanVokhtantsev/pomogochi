@@ -26,6 +26,11 @@ type SlideToStartProps = {
   onComplete: () => void;
 };
 
+type AdvanceTimerOptions = {
+  startNext?: boolean;
+  timestamp?: number;
+};
+
 type TimerPanelProps = {
   mode: Mode;
   title: string;
@@ -68,9 +73,11 @@ const DEFAULT_STATE: TimerState = {
   statsDayKey: "",
 };
 
-const STORAGE_KEY = "pomodoro_state_v2";
-const LANGUAGE_STORAGE_KEY = "pomodoro_language_v1";
-const SYNC_CHANNEL = "pomodoro_sync_v2";
+const STORAGE_KEY = "pomogochi_state_v1";
+const LANGUAGE_STORAGE_KEY = "pomogochi_language_v1";
+const LEGACY_STORAGE_KEY = "pomodoro_state_v2";
+const LEGACY_LANGUAGE_STORAGE_KEY = "pomodoro_language_v1";
+const SYNC_CHANNEL = "pomogochi_sync_v1";
 const DOWNLOAD_URL = "https://github.com/IvanVokhtantsev/pomodoro-app/releases/latest";
 const REPOSITORY_URL = "https://github.com/IvanVokhtantsev/pomodoro-app";
 const WINDOW_ID =
@@ -87,16 +94,16 @@ const COPY = {
       longBreak: "Длинный перерыв",
     },
     landing: {
-      kicker: "Pomodoro App",
-      title: "Фокус-таймер, который не теряется среди окон",
+      kicker: "Pomogochi",
+      title: "Фокус-таймер с питомцем для перерывов",
       lead:
-        "Компактное desktop-окно остаётся поверх остальных приложений, а в конце цикла раскрывается в заметный полноэкранный сигнал.",
+        "Pomogochi соединяет Pomodoro и Tamagotchi: компактный таймер остаётся поверх окон, а перерыв превращается в полноэкранного персонажа, который мягко отвлекает от работы.",
       download: "Скачать приложение",
       demo: "Открыть демо",
       notePrefix: "Важно:",
       note:
-        "настоящий always-on-top и полноэкранный сигнал работают в desktop-версии. В браузере можно попробовать механику таймера.",
-      showcaseMode: "Фокус",
+        "настоящий always-on-top и Pomogochi-перерыв поверх экрана работают в desktop-версии. В браузере можно попробовать механику таймера.",
+      showcaseMode: "Перерыв",
       showcaseStart: "Старт",
       showcaseReset: "Сброс",
       showcaseSkip: "Пропуск",
@@ -106,29 +113,29 @@ const COPY = {
           text: "Compact-режим держит таймер видимым во время работы в других приложениях.",
         },
         {
-          title: "Сильный визуальный сигнал",
-          text: "Когда цикл заканчивается, окно разворачивается поверх экрана и ждёт действия.",
+          title: "Pomogochi-перерыв",
+          text: "После фокуса окно раскрывается в большого персонажа на 5 или 15 минут.",
         },
         {
-          title: "Слайд вместо случайного клика",
-          text: "Чтобы начать следующий этап, нужно осознанно перетащить ползунок.",
+          title: "Мягкий возврат к циклу",
+          text: "Когда перерыв заканчивается, Pomogochi возвращает тебя к следующему фокусу.",
         },
       ],
       demoKicker: "Browser timer",
       demoTitle: "Таймер в браузере",
       demoText:
-        "Это онлайн-демо с фокусом, перерывами, звуком и сохранением состояния. Для окна поверх всех приложений скачай desktop app.",
+        "Это онлайн-демо с фокусом, перерывами и сохранением состояния. Для окна поверх всех приложений и полноэкранного Pomogochi скачай desktop app.",
       footerStack: "React + TypeScript + Vite + Electron",
     },
     timer: {
       desktopEyebrow: "Desktop timer",
       onlineEyebrow: "Online demo",
-      desktopHeading: "Pomodoro Timer",
+      desktopHeading: "Pomogochi",
       onlineHeading: "Онлайн-таймер",
       desktopSubtitle:
-        "Переключай текущее окно в компактный always-on-top режим, когда нужен таймер без шума.",
+        "Держи фокус-таймер поверх окон, а перерыв отдавай Pomogochi-персонажу.",
       onlineSubtitle:
-        "Браузерная версия таймера. Настоящий always-on-top доступен в desktop-приложении.",
+        "Браузерная версия таймера. Настоящий always-on-top и Pomogochi-перерыв доступны в desktop-приложении.",
       enableAlwaysOnTop: "Включить always-on-top",
       disableAlwaysOnTop: "Выключить always-on-top",
       alwaysOnTopUnavailable: "Always-on-top доступен в desktop app",
@@ -164,6 +171,18 @@ const COPY = {
       slideLabel: "Потяни, чтобы начать следующий этап",
       slideComplete: "Стартуем",
     },
+    pomogochi: {
+      aria: "Экран перерыва Pomogochi",
+      kicker: "Pomogochi break",
+      shortTitle: "Pomogochi зовёт на 5 минут",
+      longTitle: "Pomogochi зовёт на 15 минут",
+      shortMessage: "Отведи взгляд, расправь плечи, дай голове выдохнуть.",
+      longMessage: "Можно встать, пройтись и вернуться уже с новым запасом внимания.",
+      helper: "Когда перерыв закончится, следующий фокус начнётся автоматически.",
+      remaining: "Осталось",
+      skip: "Пропустить перерыв",
+      petAction: "Кликнуть Pomogochi",
+    },
   },
   en: {
     languageLabel: "Switch to Russian",
@@ -173,16 +192,16 @@ const COPY = {
       longBreak: "Long break",
     },
     landing: {
-      kicker: "Pomodoro App",
-      title: "A focus timer that does not disappear behind your work",
+      kicker: "Pomogochi",
+      title: "A focus timer with a break-time pet",
       lead:
-        "The compact desktop window stays above other apps, then expands into a clear full-screen cue when a session ends.",
+        "Pomogochi blends Pomodoro with Tamagotchi: the compact timer stays above your work, then breaks become a full-screen character that gently pulls you away.",
       download: "Download app",
       demo: "Open demo",
       notePrefix: "Note:",
       note:
-        "true always-on-top and the full-screen cue are available in the desktop app. The browser demo lets you try the timer flow.",
-      showcaseMode: "Focus",
+        "true always-on-top and the full-screen Pomogochi break are available in the desktop app. The browser demo lets you try the timer flow.",
+      showcaseMode: "Break",
       showcaseStart: "Start",
       showcaseReset: "Reset",
       showcaseSkip: "Skip",
@@ -192,29 +211,29 @@ const COPY = {
           text: "Compact mode keeps the timer visible while you work in other apps.",
         },
         {
-          title: "Strong visual cue",
-          text: "When a cycle ends, the window expands above the screen and waits for action.",
+          title: "Pomogochi breaks",
+          text: "After focus, the window expands into a big character for 5 or 15 minutes.",
         },
         {
-          title: "Slide, not a stray click",
-          text: "Starting the next stage requires an intentional drag gesture.",
+          title: "A softer return",
+          text: "When the break ends, Pomogochi brings you back into the next focus cycle.",
         },
       ],
       demoKicker: "Browser timer",
       demoTitle: "Try it online",
       demoText:
-        "This online demo includes focus, breaks, sound, and saved state. Download the desktop app for true always-on-top.",
+        "This online demo includes focus, breaks, and saved state. Download the desktop app for true always-on-top and the full Pomogochi break screen.",
       footerStack: "React + TypeScript + Vite + Electron",
     },
     timer: {
       desktopEyebrow: "Desktop timer",
       onlineEyebrow: "Online demo",
-      desktopHeading: "Pomodoro Timer",
+      desktopHeading: "Pomogochi",
       onlineHeading: "Online timer",
       desktopSubtitle:
-        "Switch the current window into a compact always-on-top timer when you need focus without noise.",
+        "Keep the focus timer above your windows, then hand breaks to the Pomogochi character.",
       onlineSubtitle:
-        "Browser timer demo. True always-on-top is available in the desktop app.",
+        "Browser timer demo. True always-on-top and Pomogochi breaks are available in the desktop app.",
       enableAlwaysOnTop: "Enable always-on-top",
       disableAlwaysOnTop: "Disable always-on-top",
       alwaysOnTopUnavailable: "Always-on-top needs the desktop app",
@@ -249,6 +268,18 @@ const COPY = {
       breakMessage: "You can return to the next focus cycle.",
       slideLabel: "Slide to start the next stage",
       slideComplete: "Starting",
+    },
+    pomogochi: {
+      aria: "Pomogochi break screen",
+      kicker: "Pomogochi break",
+      shortTitle: "Pomogochi wants 5 minutes",
+      longTitle: "Pomogochi wants 15 minutes",
+      shortMessage: "Look away, stretch your shoulders, and let your brain breathe.",
+      longMessage: "Stand up, wander a little, and come back with fresh attention.",
+      helper: "When the break ends, the next focus cycle starts automatically.",
+      remaining: "Remaining",
+      skip: "Skip break",
+      petAction: "Click Pomogochi",
     },
   },
 } as const;
@@ -334,7 +365,7 @@ function sanitizeState(candidate: unknown): TimerState {
 }
 
 function readStoredState() {
-  const raw = localStorage.getItem(STORAGE_KEY);
+  const raw = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
   if (!raw) {
     return DEFAULT_STATE;
   }
@@ -347,7 +378,9 @@ function readStoredState() {
 }
 
 function readStoredLanguage(): Language {
-  const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  const stored =
+    localStorage.getItem(LANGUAGE_STORAGE_KEY) ??
+    localStorage.getItem(LEGACY_LANGUAGE_STORAGE_KEY);
   if (stored === "ru" || stored === "en") {
     return stored;
   }
@@ -359,29 +392,35 @@ function getRemainingSeconds(endTime: number) {
   return Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
 }
 
-function advanceTimer(state: TimerState) {
+function advanceTimer(state: TimerState, options: AdvanceTimerOptions = {}) {
+  const startNext = Boolean(options.startNext);
+  const timestamp = options.timestamp ?? Date.now();
+
   if (state.mode === "focus") {
     const nextStreak = state.focusStreak + 1;
     const nextMode: Mode = nextStreak % 4 === 0 ? "longBreak" : "shortBreak";
+    const secondsLeft = DURATIONS[nextMode];
 
     return {
       mode: nextMode,
-      secondsLeft: DURATIONS[nextMode],
-      isRunning: false,
+      secondsLeft,
+      isRunning: startNext,
       completedPomodoros: state.completedPomodoros + 1,
       focusStreak: nextStreak,
-      endTime: null,
+      endTime: startNext ? timestamp + secondsLeft * 1000 : null,
       statsDayKey: state.statsDayKey,
     };
   }
 
+  const secondsLeft = DURATIONS.focus;
+
   return {
     mode: "focus" as const,
-    secondsLeft: DURATIONS.focus,
-    isRunning: false,
+    secondsLeft,
+    isRunning: startNext,
     completedPomodoros: state.completedPomodoros,
     focusStreak: state.focusStreak,
-    endTime: null,
+    endTime: startNext ? timestamp + secondsLeft * 1000 : null,
     statsDayKey: state.statsDayKey,
   };
 }
@@ -650,11 +689,127 @@ function CompletionOverlay({
   );
 }
 
+function PomogochiBreakOverlay({
+  mode,
+  secondsLeft,
+  copy,
+  onSkip,
+}: {
+  mode: Mode;
+  secondsLeft: number;
+  copy: AppCopy;
+  onSkip: () => void;
+}) {
+  const isLongBreak = mode === "longBreak";
+  const [reactionCount, setReactionCount] = useState(0);
+  const [activityTick, setActivityTick] = useState(() => Date.now());
+  const [lastActivityAt, setLastActivityAt] = useState(() => Date.now());
+  const reactionBubbles = reactionCount > 0 ? Array.from({ length: 7 }) : [];
+  const breakDuration = DURATIONS[mode] || DURATIONS.shortBreak;
+  const timeAgitation = Math.min(1, Math.max(0, secondsLeft / breakDuration));
+  const interactionAgitation = Math.min(
+    1,
+    Math.max(0, 1 - (activityTick - lastActivityAt) / 3600)
+  );
+  const agitation = Math.max(timeAgitation, interactionAgitation * 0.84);
+  const calmProgress = 1 - agitation;
+  const petStyle = {
+    "--agitation": agitation.toFixed(2),
+    "--pomogochi-hue": `${Math.round(356 + calmProgress * 160)}`,
+    "--pomogochi-shake": `${(agitation * 7).toFixed(2)}px`,
+    "--pomogochi-shake-duration": `${Math.round(520 - agitation * 360)}ms`,
+  } as CSSProperties;
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActivityTick(Date.now());
+    }, 250);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
+  const registerPetActivity = () => {
+    const timestamp = Date.now();
+    setLastActivityAt(timestamp);
+    setActivityTick(timestamp);
+  };
+
+  return (
+    <div
+      className="pomogochi-overlay"
+      aria-label={copy.pomogochi.aria}
+      aria-modal="true"
+      role="dialog"
+      onPointerMove={registerPetActivity}
+    >
+      <div className="pomogochi-card">
+        <div className="pomogochi-copy">
+          <span className="pomogochi-kicker">{copy.pomogochi.kicker}</span>
+          <h2>{isLongBreak ? copy.pomogochi.longTitle : copy.pomogochi.shortTitle}</h2>
+          <p>{isLongBreak ? copy.pomogochi.longMessage : copy.pomogochi.shortMessage}</p>
+          <div className="pomogochi-countdown">
+            <span>{copy.pomogochi.remaining}</span>
+            <strong>{formatTime(secondsLeft)}</strong>
+          </div>
+          <small>{copy.pomogochi.helper}</small>
+        </div>
+
+        <button
+          className="pomogochi-stage"
+          type="button"
+          aria-label={copy.pomogochi.petAction}
+          onClick={() => {
+            registerPetActivity();
+            setReactionCount((count) => count + 1);
+          }}
+        >
+          <div className="pomogochi-pet-shell" style={petStyle}>
+            <div
+              className={`pomogochi-pet ${isLongBreak ? "pomogochi-pet--long" : ""} ${
+                reactionCount % 2 === 1 ? "pomogochi-pet--surprised" : ""
+              }`}
+            >
+              <span className="pomogochi-ear pomogochi-ear--left" />
+              <span className="pomogochi-ear pomogochi-ear--right" />
+              <span className="pomogochi-face">
+                <span className="pomogochi-eye" />
+                <span className="pomogochi-eye" />
+                <span className="pomogochi-mouth" />
+              </span>
+            </div>
+          </div>
+          {reactionBubbles.map((_, index) => (
+            <span
+              key={`${reactionCount}-${index}`}
+              className="pomogochi-bubble"
+              style={
+                {
+                  "--bubble-x": `${(index - 3) * 24}px`,
+                  "--bubble-delay": `${index * 34}ms`,
+                  "--bubble-size": `${12 + (index % 3) * 5}px`,
+                } as CSSProperties
+              }
+            />
+          ))}
+          <span className="pomogochi-orbit pomogochi-orbit--one" />
+          <span className="pomogochi-orbit pomogochi-orbit--two" />
+        </button>
+
+        <button className="pomogochi-skip" onClick={onSkip}>
+          {copy.pomogochi.skip}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function TimerPanel({
   mode,
   title,
   eyebrow = "Desktop timer",
-  heading = "Pomodoro Timer",
+  heading = "Pomogochi",
   subtitle = "Переключай текущее окно в компактный always-on-top режим, когда нужен таймер без шума.",
   secondsLeft,
   isRunning,
@@ -677,11 +832,25 @@ function TimerPanel({
     return (
       <section className="panel panel--mini">
         <div className="compact-shell">
-          <div className="compact-topline">
-            <div className="compact-brand">
-              <span className="compact-brand-label">Pomodoro</span>
-              <span className="compact-mode-name">{title}</span>
-            </div>
+          <div className="compact-brand">
+            <span className="compact-brand-label">Pomogochi</span>
+            <span className="compact-mode-name">{title}</span>
+          </div>
+
+          <div className="compact-timer-wrap">
+            <div className="timer timer--compact">{formatTime(secondsLeft)}</div>
+          </div>
+
+          <div className="compact-control-matrix">
+            <span
+              className={`running-badge ${isRunning ? "running-badge--live" : ""}`}
+              title={isRunning ? copy.timer.running : copy.timer.paused}
+            >
+              {isRunning ? copy.timer.runningShort : copy.timer.pausedShort}
+            </span>
+            <span className="compact-stats" title={`${copy.timer.today} ${completedPomodoros}`}>
+              {copy.timer.todayCompact} {completedPomodoros}
+            </span>
             {onToggleMiniMode ? (
               <button
                 className={`compact-icon-button compact-icon-button--restore ${miniModeEnabled ? "compact-icon-button--active" : ""}`}
@@ -695,27 +864,10 @@ function TimerPanel({
               >
                 {isDesktopApp ? "↗" : copy.timer.desktopOnly}
               </button>
-            ) : null}
-          </div>
+            ) : (
+              <span aria-hidden="true" />
+            )}
 
-          <div className="compact-main-grid">
-            <div className="compact-timer-wrap">
-              <div className="timer timer--compact">{formatTime(secondsLeft)}</div>
-            </div>
-            <div className="compact-side">
-              <span
-                className={`running-badge ${isRunning ? "running-badge--live" : ""}`}
-                title={isRunning ? copy.timer.running : copy.timer.paused}
-              >
-                {isRunning ? copy.timer.runningShort : copy.timer.pausedShort}
-              </span>
-              <span className="compact-stats" title={`${copy.timer.today} ${completedPomodoros}`}>
-                {copy.timer.todayCompact} {completedPomodoros}
-              </span>
-            </div>
-          </div>
-
-          <div className="compact-footer">
             <div className="mode-switch" aria-label={copy.timer.modeAria}>
               <button
                 className={mode === "focus" ? "active" : ""}
@@ -885,6 +1037,14 @@ function MarketingPage({
           <h1 id="landing-title">{copy.landing.title}</h1>
           <p className="landing-lead">{copy.landing.lead}</p>
 
+          <div className="landing-concept" aria-label="Pomogochi concept">
+            <span>Pomodoro</span>
+            <strong>+</strong>
+            <span>Tamagotchi</span>
+            <strong>=</strong>
+            <span>Pomogochi</span>
+          </div>
+
           <div className="landing-actions">
             <a className="landing-button landing-button--primary" href={DOWNLOAD_URL}>
               {copy.landing.download}
@@ -914,10 +1074,15 @@ function MarketingPage({
             </div>
             <div className="showcase-card">
               <div>
-                <p>Pomodoro</p>
+                <p>Pomogochi</p>
                 <h2>{copy.landing.showcaseMode}</h2>
               </div>
-              <strong>24:47</strong>
+              <div className="showcase-pet" aria-hidden="true">
+                <span className="showcase-pet-eye" />
+                <span className="showcase-pet-eye" />
+                <span className="showcase-pet-mouth" />
+              </div>
+              <strong>05:00</strong>
               <div className="showcase-controls">
                 <span>{copy.landing.showcaseStart}</span>
                 <span>{copy.landing.showcaseReset}</span>
@@ -964,9 +1129,12 @@ export default function App() {
 
   const channelRef = useRef<BroadcastChannel | null>(null);
   const lastSerializedRef = useRef(JSON.stringify(timerState));
-  const completionCueIdRef = useRef(0);
+  const pomogochiAttentionActiveRef = useRef(false);
   const copy = COPY[language];
-  const compactViewportEnabled = isDesktopApp && miniModeEnabled && completionCue === null;
+  const pomogochiActive =
+    timerState.mode !== "focus" && timerState.isRunning && completionCue === null;
+  const attentionModeActive = completionCue !== null || pomogochiActive;
+  const compactViewportEnabled = isDesktopApp && miniModeEnabled && !attentionModeActive;
 
   useEffect(() => {
     const syncDailyStats = () => {
@@ -1007,7 +1175,10 @@ export default function App() {
     }
 
     const handleStorage = (event: StorageEvent) => {
-      if (event.key !== STORAGE_KEY || !event.newValue) {
+      if (
+        (event.key !== STORAGE_KEY && event.key !== LEGACY_STORAGE_KEY) ||
+        !event.newValue
+      ) {
         return;
       }
 
@@ -1057,6 +1228,23 @@ export default function App() {
   }, [compactViewportEnabled]);
 
   useEffect(() => {
+    if (!isDesktopApp) {
+      return;
+    }
+
+    if (pomogochiActive) {
+      pomogochiAttentionActiveRef.current = true;
+      void window.electronAPI?.enterTimerAttentionMode();
+      return;
+    }
+
+    if (pomogochiAttentionActiveRef.current) {
+      pomogochiAttentionActiveRef.current = false;
+      void window.electronAPI?.restoreFromTimerAttentionMode();
+    }
+  }, [isDesktopApp, pomogochiActive]);
+
+  useEffect(() => {
     localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
     document.documentElement.lang = language;
   }, [language]);
@@ -1079,6 +1267,7 @@ export default function App() {
 
     const tick = () => {
       let completedMode: Mode | null = null;
+      const timestamp = Date.now();
 
       setTimerState((current) => {
         const nextCurrent = normalizeDailyStats(current);
@@ -1090,7 +1279,7 @@ export default function App() {
         const remaining = getRemainingSeconds(nextCurrent.endTime);
         if (remaining <= 0) {
           completedMode = nextCurrent.mode;
-          return advanceTimer(nextCurrent);
+          return advanceTimer(nextCurrent, { startNext: true, timestamp });
         }
 
         if (remaining === nextCurrent.secondsLeft) {
@@ -1104,13 +1293,7 @@ export default function App() {
       });
 
       if (completedMode !== null) {
-        completionCueIdRef.current += 1;
-        const cueId = completionCueIdRef.current;
-        setCompletionCue({ id: cueId, completedMode });
-
-        if (isDesktopApp) {
-          void window.electronAPI?.enterTimerAttentionMode();
-        }
+        setCompletionCue(null);
         void playCompletionTone();
       }
     };
@@ -1126,13 +1309,15 @@ export default function App() {
   useEffect(() => {
     const viewLabel = completionCue
       ? "Alert"
-      : isDesktopApp
-        ? miniModeEnabled
-          ? "Compact"
-          : "Main"
-        : "Online";
+      : pomogochiActive
+        ? "Pomogochi"
+        : isDesktopApp
+          ? miniModeEnabled
+            ? "Compact"
+            : "Main"
+          : "Online";
     document.title = `${formatTime(timerState.secondsLeft)} • ${viewLabel}`;
-  }, [completionCue, isDesktopApp, miniModeEnabled, timerState.secondsLeft]);
+  }, [completionCue, isDesktopApp, miniModeEnabled, pomogochiActive, timerState.secondsLeft]);
 
   const title = useMemo(() => {
     return copy.modes[timerState.mode];
@@ -1231,6 +1416,15 @@ export default function App() {
     });
   };
 
+  const pomogochiOverlay = pomogochiActive ? (
+    <PomogochiBreakOverlay
+      mode={timerState.mode}
+      secondsLeft={timerState.secondsLeft}
+      copy={copy}
+      onSkip={skip}
+    />
+  ) : null;
+
   const timerPanel = (
       <TimerPanel
         mode={timerState.mode}
@@ -1260,6 +1454,7 @@ export default function App() {
   if (!isDesktopApp) {
     return (
       <main className="container container--landing">
+        {pomogochiOverlay}
         {completionCue ? (
           <CompletionOverlay
             key={completionCue.id}
@@ -1278,9 +1473,10 @@ export default function App() {
   return (
     <main
       className={`container ${compactViewportEnabled ? "container--mini" : ""} ${
-        completionCue ? "container--attention" : ""
+        attentionModeActive ? "container--attention" : ""
       }`}
     >
+      {pomogochiOverlay}
       {completionCue ? (
         <CompletionOverlay
           key={completionCue.id}

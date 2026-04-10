@@ -1,14 +1,19 @@
-# Pomodoro App
+# Pomogochi
 
-Desktop Pomodoro timer for people who want the timer to stay visible while they work.
+Desktop focus timer that blends Pomodoro with a small Tamagotchi-like break companion.
 
-The key feature is not the sound. It is the desktop behavior: a compact always-on-top timer that stays above other windows, plus a full-screen attention view when a cycle ends.
+The key feature is the desktop behavior: a compact always-on-top timer that stays above other windows, plus a full-screen Pomogochi character that appears during breaks and gently pulls you away from work.
+
+Pomogochi = Pomodoro + Tamagotchi.
 
 ## Highlights
 
 - Compact always-on-top mode for macOS and Windows.
-- Full-screen attention mode when a timer finishes.
-- Slide-to-start control so the next stage starts intentionally, not from an accidental click.
+- Full-screen Pomogochi break mode for 5-minute and 15-minute breaks.
+- Automatic transition from focus into break, and from break into the next focus cycle.
+- Clickable break character that reacts with a playful shape change and bubbles.
+- Break character starts excited and red, then calms down as the break progresses if you leave it alone.
+- Compact mode uses a tight 3x3 control grid so the timer stays readable in a small always-on-top window.
 - Focus, short break, and long break modes.
 - Daily completed-session counter with reset after 05:00 local time.
 - Synthesized completion sound as a secondary cue.
@@ -29,8 +34,8 @@ Browsers cannot reliably keep a tab above every other application. The desktop v
 
 - keep the compact timer above other windows;
 - prevent compact mode from being minimized accidentally;
-- expand the window above the screen when a timer cycle finishes;
-- return to the previous regular or compact window state after slide-to-start.
+- expand into a full-screen Pomogochi break companion;
+- return to the previous regular or compact window state when the break ends.
 
 ## Development
 
@@ -54,13 +59,21 @@ This starts the Vite renderer and the Electron desktop shell together.
 - `npm run build` type-checks and builds the renderer and Electron files.
 - `npm run lint` runs ESLint.
 - `npm run start` starts Electron from the built Electron entrypoint.
-- `npm run dist` builds the app and packages desktop installers.
+- `npm run dist` builds the app and packages desktop installers for the current OS.
 
 ## Deployment
 
 GitHub Pages is configured with `.github/workflows/deploy.yml`. The workflow builds `dist` with the `/pomodoro-app/` base path and publishes the landing page plus browser demo.
 
-Desktop downloads are attached to GitHub Releases after packaging with Electron Builder.
+Desktop release publishing is configured with `.github/workflows/release.yml`.
+
+How to publish a production release:
+
+1. Update app changes and commit to `main`.
+2. Create a version tag like `v1.0.0`.
+3. Push the tag to GitHub (`git push origin v1.0.0`).
+4. GitHub Actions builds macOS (`.dmg`) and Windows (`.exe`) installers.
+5. The workflow attaches all artifacts to the matching GitHub Release.
 
 ## Build Output
 

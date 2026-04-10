@@ -138,6 +138,50 @@ body.compact-viewport #root {
   font-weight: 540;
 }
 
+.landing-concept {
+  width: fit-content;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  padding: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.54);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 14px 28px rgba(15, 23, 42, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.66);
+}
+
+.landing-concept span,
+.landing-concept strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 860;
+}
+
+.landing-concept span {
+  padding: 0 12px;
+  color: rgba(15, 23, 42, 0.88);
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.landing-concept span:last-child {
+  color: #f8fafc;
+  background: linear-gradient(135deg, #ef4444, #e11d48);
+  box-shadow: 0 10px 18px rgba(225, 29, 72, 0.24);
+}
+
+.landing-concept strong {
+  color: rgba(71, 85, 105, 0.74);
+}
+
 .landing-actions {
   display: flex;
   flex-wrap: wrap;
@@ -277,7 +321,7 @@ body.compact-viewport #root {
 .showcase-card {
   height: calc(100% - 42px);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   grid-template-rows: auto 1fr;
   gap: 20px;
   align-items: center;
@@ -305,6 +349,36 @@ body.compact-viewport #root {
   font-size: clamp(54px, 8vw, 96px);
   line-height: 0.85;
   letter-spacing: -0.07em;
+}
+
+.showcase-pet {
+  width: clamp(76px, 10vw, 112px);
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  padding: 22px 24px 18px;
+  border-radius: 42% 58% 50% 50%;
+  background: linear-gradient(145deg, #fb7185, #e11d48);
+  box-shadow:
+    0 18px 34px rgba(225, 29, 72, 0.28),
+    inset 0 12px 22px rgba(255, 255, 255, 0.28);
+}
+
+.showcase-pet-eye {
+  width: 12px;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: #111827;
+}
+
+.showcase-pet-mouth {
+  grid-column: 1 / -1;
+  width: 28px;
+  height: 14px;
+  border-bottom: 4px solid #111827;
+  border-radius: 0 0 999px 999px;
 }
 
 .showcase-controls {
@@ -424,7 +498,7 @@ body.compact-viewport #root {
   height: 100%;
   min-height: 0;
   max-height: none;
-  padding: 5px 8px;
+  padding: 3px 8px 5px;
   border-radius: 14px;
   display: block;
   overflow: hidden;
@@ -608,6 +682,284 @@ body.compact-viewport #root {
   margin-top: 6px;
   font-size: 11px;
   line-height: 1.25;
+}
+
+.pomogochi-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  display: grid;
+  place-items: center;
+  padding: clamp(18px, 4vw, 64px);
+  color: #f8fafc;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(56, 189, 248, 0.34), transparent 30%),
+    radial-gradient(circle at 78% 24%, rgba(251, 113, 133, 0.42), transparent 28%),
+    radial-gradient(circle at 48% 78%, rgba(45, 212, 191, 0.24), transparent 34%),
+    rgba(8, 13, 28, 0.88);
+  backdrop-filter: blur(16px) saturate(135%);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+  animation: completion-overlay 320ms ease-out both;
+}
+
+.pomogochi-card {
+  position: relative;
+  width: min(100%, 1040px);
+  min-height: min(76vh, 640px);
+  display: grid;
+  grid-template-columns: minmax(280px, 0.86fr) minmax(280px, 1fr);
+  align-items: center;
+  gap: clamp(24px, 5vw, 72px);
+  padding: clamp(28px, 5vw, 68px);
+  overflow: hidden;
+  border-radius: clamp(28px, 5vw, 56px);
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.86), rgba(30, 41, 59, 0.62)),
+    radial-gradient(circle at 72% 32%, rgba(244, 63, 94, 0.2), transparent 38%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 34px 90px rgba(2, 6, 23, 0.46),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  animation: completion-card 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pomogochi-card::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.pomogochi-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.pomogochi-kicker {
+  display: block;
+  margin-bottom: 14px;
+  color: rgba(226, 232, 240, 0.72);
+  font-size: clamp(11px, 1.2vw, 14px);
+  font-weight: 860;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.pomogochi-copy h2 {
+  margin: 0 0 18px;
+  color: #f8fafc;
+  font-size: clamp(42px, 6.4vw, 88px);
+  line-height: 0.9;
+  letter-spacing: -0.07em;
+}
+
+.pomogochi-copy p {
+  max-width: 520px;
+  margin: 0;
+  color: rgba(226, 232, 240, 0.82);
+  font-size: clamp(17px, 2vw, 24px);
+  font-weight: 620;
+  line-height: 1.42;
+}
+
+.pomogochi-countdown {
+  width: fit-content;
+  margin: clamp(28px, 5vw, 56px) 0 16px;
+  padding: 16px 22px 18px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.pomogochi-countdown span {
+  display: block;
+  margin-bottom: 4px;
+  color: rgba(226, 232, 240, 0.7);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pomogochi-countdown strong {
+  display: block;
+  color: #f8fafc;
+  font-size: clamp(58px, 8vw, 116px);
+  line-height: 0.85;
+  letter-spacing: -0.065em;
+  font-variant-numeric: tabular-nums;
+}
+
+.pomogochi-copy small {
+  display: block;
+  max-width: 440px;
+  color: rgba(203, 213, 225, 0.7);
+  font-size: clamp(13px, 1.3vw, 16px);
+  font-weight: 660;
+  line-height: 1.45;
+}
+
+.pomogochi-stage {
+  position: relative;
+  z-index: 1;
+  min-height: clamp(280px, 42vw, 520px);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  appearance: none;
+  background: transparent;
+}
+
+.pomogochi-stage:focus-visible {
+  outline: 3px solid rgba(248, 250, 252, 0.72);
+  outline-offset: 10px;
+  border-radius: 42px;
+}
+
+.pomogochi-pet-shell {
+  --agitation: 1;
+  --pomogochi-hue: 356;
+  --pomogochi-shake: 7px;
+  --pomogochi-shake-duration: 160ms;
+  position: relative;
+  width: clamp(210px, 32vw, 380px);
+  aspect-ratio: 1;
+  animation: pomogochi-shake var(--pomogochi-shake-duration) linear infinite;
+}
+
+.pomogochi-pet {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border-radius: 42% 58% 50% 50%;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.52), transparent 12%),
+    linear-gradient(
+      145deg,
+      hsl(var(--pomogochi-hue) 92% 60%),
+      hsl(var(--pomogochi-hue) 84% 50%) 48%,
+      hsl(var(--pomogochi-hue) 78% 38%)
+    );
+  box-shadow:
+    0 36px 90px hsl(var(--pomogochi-hue) 86% 48% / 0.34),
+    inset 0 18px 44px rgba(255, 255, 255, 0.24),
+    inset 0 -24px 46px hsl(var(--pomogochi-hue) 86% 22% / 0.3);
+  animation: pomogochi-breathe 2200ms ease-in-out infinite;
+}
+
+.pomogochi-pet--long {
+  filter: saturate(1.06);
+}
+
+.pomogochi-pet--surprised {
+  border-radius: 58% 42% 54% 46%;
+  filter: hue-rotate(16deg) saturate(1.12);
+}
+
+.pomogochi-ear {
+  position: absolute;
+  top: 5%;
+  width: 26%;
+  aspect-ratio: 1;
+  border-radius: 52% 48% 48% 52%;
+  background: rgba(255, 255, 255, 0.26);
+  filter: blur(0.2px);
+}
+
+.pomogochi-ear--left {
+  left: 9%;
+  transform: rotate(-24deg);
+}
+
+.pomogochi-ear--right {
+  right: 9%;
+  transform: rotate(24deg);
+}
+
+.pomogochi-face {
+  position: relative;
+  width: 56%;
+  height: 38%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-items: center;
+  margin-top: 10%;
+}
+
+.pomogochi-eye {
+  width: 24%;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: #111827;
+  box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.22);
+}
+
+.pomogochi-mouth {
+  grid-column: 1 / -1;
+  width: 34%;
+  height: 20%;
+  border-bottom: 8px solid rgba(17, 24, 39, 0.82);
+  border-radius: 0 0 999px 999px;
+}
+
+.pomogochi-bubble {
+  --bubble-x: 0px;
+  --bubble-delay: 0ms;
+  --bubble-size: 16px;
+  position: absolute;
+  left: calc(50% + var(--bubble-x));
+  bottom: 26%;
+  width: var(--bubble-size);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow:
+    0 0 22px rgba(255, 255, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  animation: pomogochi-bubble 900ms ease-out var(--bubble-delay) both;
+}
+
+.pomogochi-orbit {
+  position: absolute;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  animation: pomogochi-orbit 7200ms linear infinite;
+}
+
+.pomogochi-orbit--one {
+  width: 76%;
+  aspect-ratio: 1;
+}
+
+.pomogochi-orbit--two {
+  width: 92%;
+  aspect-ratio: 1;
+  animation-duration: 9600ms;
+  animation-direction: reverse;
+}
+
+.pomogochi-skip {
+  position: absolute;
+  right: clamp(24px, 4vw, 52px);
+  bottom: clamp(22px, 4vw, 46px);
+  z-index: 2;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  cursor: pointer;
+  color: rgba(248, 250, 252, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 780;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .panel-header {
@@ -832,10 +1184,10 @@ h1 {
 }
 
 .panel--mini .running-badge {
-  min-width: 26px;
-  min-height: 18px;
-  padding: 0 7px;
-  font-size: 9px;
+  min-width: 22px;
+  min-height: 22px;
+  padding: 0;
+  font-size: 8px;
   line-height: 1;
 }
 
@@ -846,31 +1198,28 @@ h1 {
 
 .compact-shell {
   display: grid;
-  gap: 3px;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  grid-template-rows: 20px minmax(0, 1fr);
+  column-gap: 8px;
+  row-gap: 0;
   height: 100%;
   min-height: 0;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-}
-
-.compact-topline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  min-height: 22px;
 }
 
 .compact-brand {
+  grid-column: 1;
+  grid-row: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
+  justify-content: start;
   gap: 1px;
   text-align: left;
 }
 
 .compact-brand-label {
   color: rgba(71, 85, 105, 0.74);
-  font-size: 7px;
+  font-size: 6px;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -879,7 +1228,7 @@ h1 {
 
 .compact-mode-name {
   color: rgba(15, 23, 42, 0.96);
-  font-size: 10px;
+  font-size: 9px;
   line-height: 1;
   font-weight: 760;
   letter-spacing: -0.03em;
@@ -889,15 +1238,10 @@ h1 {
   text-overflow: ellipsis;
 }
 
-.compact-main-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 6px;
-  align-items: center;
-  min-height: 0;
-}
-
 .compact-timer-wrap {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: start;
   min-width: 0;
 }
 
@@ -919,32 +1263,53 @@ h1 {
 
 .timer--compact {
   margin: 0;
-  font-size: clamp(44px, 14.5vw, 52px);
+  font-size: clamp(50px, 15vw, 58px);
   line-height: 0.82;
   text-align: left;
   font-variant-numeric: tabular-nums;
 }
 
 .compact-stats {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: rgba(51, 65, 85, 0.92);
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 650;
   text-align: center;
   white-space: nowrap;
 }
 
-.compact-footer {
+.compact-control-matrix {
+  grid-column: 2;
+  grid-row: 1 / 3;
   display: grid;
-  grid-template-columns: auto auto;
-  justify-content: space-between;
-  gap: 6px;
-  align-items: center;
-  min-height: 28px;
+  grid-template-columns: repeat(3, 22px);
+  grid-template-rows: repeat(3, 22px);
+  gap: 3px;
+  align-content: start;
+  justify-content: end;
+}
+
+.compact-control-matrix .mode-switch,
+.compact-control-matrix .compact-control-cluster {
+  display: contents;
+}
+
+.compact-control-matrix .running-badge,
+.compact-control-matrix .compact-stats,
+.compact-control-matrix .compact-icon-button,
+.compact-control-matrix .mode-switch button {
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  min-height: 22px;
+  padding: 0;
 }
 
 .mode-switch {
   display: inline-grid;
-  grid-template-columns: repeat(3, 24px);
+  grid-template-columns: repeat(3, 22px);
   gap: 3px;
   padding: 0;
   border-radius: 999px;
@@ -955,8 +1320,8 @@ h1 {
 
 .mode-switch button {
   min-width: 0;
-  width: 24px;
-  min-height: 24px;
+  width: 22px;
+  min-height: 22px;
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.64);
   border-radius: 999px;
@@ -1020,10 +1385,10 @@ h1 {
 }
 
 .compact-icon-button--restore {
-  width: 26px;
-  min-width: 26px;
-  height: 26px;
-  font-size: 13px;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  font-size: 11px;
 }
 
 .compact-icon-button--active,
@@ -1049,6 +1414,14 @@ h1 {
   font-weight: 780;
   color: rgba(15, 23, 42, 0.98);
   text-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+}
+
+.panel--mini .timer--compact {
+  margin: 0;
+  font-size: clamp(50px, 15vw, 58px);
+  line-height: 0.82;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
 }
 
 .controls {
@@ -1157,6 +1530,65 @@ h1 {
   }
 }
 
+@keyframes pomogochi-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-14px) scale(1.035);
+  }
+}
+
+@keyframes pomogochi-shake {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  25% {
+    transform: translate(var(--pomogochi-shake), calc(var(--pomogochi-shake) * -0.35))
+      rotate(1.4deg);
+  }
+
+  50% {
+    transform: translate(calc(var(--pomogochi-shake) * -0.65), var(--pomogochi-shake))
+      rotate(-1.2deg);
+  }
+
+  75% {
+    transform: translate(calc(var(--pomogochi-shake) * 0.35), calc(var(--pomogochi-shake) * 0.55))
+      rotate(0.8deg);
+  }
+}
+
+@keyframes pomogochi-orbit {
+  from {
+    transform: rotate(0deg) scaleX(1.16) scaleY(0.72);
+  }
+
+  to {
+    transform: rotate(360deg) scaleX(1.16) scaleY(0.72);
+  }
+}
+
+@keyframes pomogochi-bubble {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.3);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -160px) scale(1.4);
+  }
+}
+
 @media (max-width: 920px) {
   .landing-hero,
   .landing-demo {
@@ -1173,6 +1605,20 @@ h1 {
 
   .landing-feature-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pomogochi-card {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .pomogochi-stage {
+    min-height: 260px;
+  }
+
+  .pomogochi-skip {
+    position: static;
+    justify-self: start;
   }
 }
 

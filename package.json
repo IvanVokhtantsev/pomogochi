@@ -1,7 +1,7 @@
 {
-  "name": "pomodoro-app",
+  "name": "pomogochi",
   "private": true,
-  "version": "0.1.4",
+  "version": "1.0.0",
   "main": "electron-dist/main.js",
   "type": "module",
   "scripts": {
@@ -37,8 +37,8 @@
     "wait-on": "^9.0.4"
   },
   "build": {
-    "appId": "com.ivanvohtancev.pomodoroapp",
-    "productName": "Pomodoro App",
+    "appId": "com.ivanvohtancev.pomogochi",
+    "productName": "Pomogochi",
     "directories": {
       "output": "release"
     },
@@ -49,11 +49,11 @@
     ],
     "mac": {
       "target": "dmg",
-      "icon": "build/icon.icns"
+      "icon": "build/icon.png"
     },
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico"
+      "icon": "build/icon.png"
     },
     "linux": {
       "target": "AppImage"
