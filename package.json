@@ -1,7 +1,13 @@
 {
   "name": "pomogochi",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "description": "Pomogochi is a desktop Pomodoro timer with an always-on-top compact mode and a full-screen break companion.",
+  "author": "Ivan Vokhtantsev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IvanVokhtantsev/pomogochi.git"
+  },
   "main": "electron-dist/main.js",
   "type": "module",
   "scripts": {
@@ -12,7 +18,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "electron .",
-    "dist": "npm run build && electron-builder"
+    "dist": "npm run build && electron-builder",
+    "dist:ci": "npm run build && electron-builder --publish never"
   },
   "dependencies": {
     "react": "^19.2.4",

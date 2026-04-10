@@ -1,5 +1,8 @@
 name: Build desktop release
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   push:
     tags:
@@ -31,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Build desktop package
-        run: npm run dist
+        run: npm run dist:ci
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
