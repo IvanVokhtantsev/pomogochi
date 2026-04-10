@@ -1,4 +1,5 @@
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, ipcMain, screen, shell } from "electron";
+import type { Rectangle } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -21,8 +22,17 @@ const COMPACT_BOUNDS = {
 
 const DEV_ICON_PATH = path.join(__dirname, "../build/icon.png");
 
+type AttentionRestoreState = {
+  compactModeEnabled: boolean;
+  bounds: Rectangle;
+  isFullScreen: boolean;
+  isMaximized: boolean;
+  isSimpleFullScreen: boolean;
+};
+
 let mainWindow: BrowserWindow | null = null;
 let compactModeEnabled = false;
+let attentionRestoreState: AttentionRestoreState | null = null;
 
 function sendCompactModeState(enabled: boolean) {
   BrowserWindow.getAllWindows().forEach((window) => {
@@ -80,6 +90,87 @@ function applyCompactMode(enabled: boolean) {
   mainWindow.focus();
   sendCompactModeState(enabled);
   return enabled;
+}
+
+function enterTimerAttentionMode() {
+  const window = mainWindow ?? createMainWindow();
+
+  if (!attentionRestoreState) {
+    attentionRestoreState = {
+      compactModeEnabled,
+      bounds: window.getBounds(),
+      isFullScreen: window.isFullScreen(),
+      isMaximized: window.isMaximized(),
+      isSimpleFullScreen: window.isSimpleFullScreen(),
+    };
+  }
+
+  const display = screen.getDisplayMatching(window.getBounds());
+
+  window.setResizable(true);
+  window.setMaximizable(true);
+  window.setFullScreenable(true);
+  window.setMinimumSize(360, 220);
+  window.setAlwaysOnTop(true, "screen-saver");
+
+  if (window.isMinimized()) {
+    window.restore();
+  }
+
+  if (process.platform === "darwin") {
+    window.setSimpleFullScreen(true);
+  } else {
+    window.setBounds(display.bounds, true);
+    window.setFullScreen(true);
+  }
+
+  window.show();
+  window.focus();
+  window.moveTop();
+}
+
+function restoreFromTimerAttentionMode() {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    attentionRestoreState = null;
+    return;
+  }
+
+  const restoreState = attentionRestoreState;
+  attentionRestoreState = null;
+
+  if (!restoreState) {
+    return;
+  }
+
+  if (mainWindow.isSimpleFullScreen() && !restoreState.isSimpleFullScreen) {
+    mainWindow.setSimpleFullScreen(false);
+  }
+
+  if (mainWindow.isFullScreen() && !restoreState.isFullScreen) {
+    mainWindow.setFullScreen(false);
+  }
+
+  if (restoreState.compactModeEnabled) {
+    applyCompactMode(true);
+    return;
+  }
+
+  compactModeEnabled = false;
+  mainWindow.setAlwaysOnTop(false, "normal");
+  mainWindow.setResizable(true);
+  mainWindow.setMaximizable(true);
+  mainWindow.setFullScreenable(true);
+  mainWindow.setMinimumSize(DEFAULT_BOUNDS.minWidth, DEFAULT_BOUNDS.minHeight);
+
+  if (restoreState.isMaximized) {
+    mainWindow.maximize();
+  } else {
+    mainWindow.setBounds(restoreState.bounds, true);
+  }
+
+  mainWindow.show();
+  mainWindow.focus();
+  sendCompactModeState(false);
 }
 
 function createMainWindow() {
@@ -143,6 +234,14 @@ app.whenReady().then(() => {
 
   ipcMain.handle("timer:play-sound", () => {
     shell.beep();
+  });
+
+  ipcMain.handle("timer:enter-attention-mode", () => {
+    enterTimerAttentionMode();
+  });
+
+  ipcMain.handle("timer:restore-from-attention-mode", () => {
+    restoreFromTimerAttentionMode();
   });
 
   app.on("activate", () => {

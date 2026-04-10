@@ -18,4 +18,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
     };
   },
   playTimerSound: () => ipcRenderer.invoke("timer:play-sound") as Promise<void>,
+  enterTimerAttentionMode: () =>
+    ipcRenderer.invoke("timer:enter-attention-mode") as Promise<void>,
+  restoreFromTimerAttentionMode: () =>
+    ipcRenderer.invoke("timer:restore-from-attention-mode") as Promise<void>,
 });

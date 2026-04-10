@@ -306,6 +306,7 @@ function CompletionOverlay({ completedMode }: { completedMode: Mode }) {
         <span className="completion-overlay-kicker">Timer alert</span>
         <strong>{copy.title}</strong>
         <span>{copy.message}</span>
+        <em>Нажми “Старт”, чтобы перейти дальше</em>
       </div>
     </div>
   );
@@ -598,15 +599,7 @@ export default function App() {
   const channelRef = useRef<BroadcastChannel | null>(null);
   const lastSerializedRef = useRef(JSON.stringify(timerState));
   const completionCueIdRef = useRef(0);
-  const completionCueTimeoutRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (completionCueTimeoutRef.current !== null) {
-        window.clearTimeout(completionCueTimeoutRef.current);
-      }
-    };
-  }, []);
+  const compactViewportEnabled = isDesktopApp && miniModeEnabled && completionCue === null;
 
   useEffect(() => {
     const syncDailyStats = () => {
@@ -689,6 +682,14 @@ export default function App() {
   }, [isDesktopApp]);
 
   useEffect(() => {
+    document.body.classList.toggle("compact-viewport", compactViewportEnabled);
+
+    return () => {
+      document.body.classList.remove("compact-viewport");
+    };
+  }, [compactViewportEnabled]);
+
+  useEffect(() => {
     const serialized = JSON.stringify(timerState);
     if (serialized === lastSerializedRef.current) {
       return;
@@ -735,14 +736,9 @@ export default function App() {
         const cueId = completionCueIdRef.current;
         setCompletionCue({ id: cueId, completedMode });
 
-        if (completionCueTimeoutRef.current !== null) {
-          window.clearTimeout(completionCueTimeoutRef.current);
+        if (isDesktopApp) {
+          void window.electronAPI?.enterTimerAttentionMode();
         }
-
-        completionCueTimeoutRef.current = window.setTimeout(() => {
-          setCompletionCue((current) => (current?.id === cueId ? null : current));
-        }, 4200);
-
         void playCompletionTone();
       }
     };
@@ -753,12 +749,18 @@ export default function App() {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [timerState.isRunning, timerState.endTime]);
+  }, [isDesktopApp, timerState.isRunning, timerState.endTime]);
 
   useEffect(() => {
-    const viewLabel = isDesktopApp ? (miniModeEnabled ? "Compact" : "Main") : "Online";
+    const viewLabel = completionCue
+      ? "Alert"
+      : isDesktopApp
+        ? miniModeEnabled
+          ? "Compact"
+          : "Main"
+        : "Online";
     document.title = `${formatTime(timerState.secondsLeft)} • ${viewLabel}`;
-  }, [isDesktopApp, miniModeEnabled, timerState.secondsLeft]);
+  }, [completionCue, isDesktopApp, miniModeEnabled, timerState.secondsLeft]);
 
   const title = useMemo(() => {
     if (timerState.mode === "focus") return "Фокус";
@@ -766,7 +768,19 @@ export default function App() {
     return "Длинный перерыв";
   }, [timerState.mode]);
 
+  const dismissCompletionCue = () => {
+    setCompletionCue(null);
+
+    if (isDesktopApp) {
+      void window.electronAPI?.restoreFromTimerAttentionMode();
+    }
+  };
+
   const start = () => {
+    if (completionCue) {
+      dismissCompletionCue();
+    }
+
     setTimerState((current) => {
       const nextCurrent = normalizeDailyStats(current);
 
@@ -857,10 +871,10 @@ export default function App() {
         secondsLeft={timerState.secondsLeft}
         isRunning={timerState.isRunning}
         completedPomodoros={timerState.completedPomodoros}
-        isCompactMode={miniModeEnabled}
+        isCompactMode={compactViewportEnabled}
         isDesktopApp={isDesktopApp}
         miniModeEnabled={miniModeEnabled}
-        showMiniModeControl={isDesktopApp}
+        showMiniModeControl={isDesktopApp && completionCue === null}
         onSwitchMode={switchMode}
         onStart={start}
         onPause={pause}
@@ -882,7 +896,11 @@ export default function App() {
   }
 
   return (
-    <main className={`container ${miniModeEnabled ? "container--mini" : ""}`}>
+    <main
+      className={`container ${compactViewportEnabled ? "container--mini" : ""} ${
+        completionCue ? "container--attention" : ""
+      }`}
+    >
       {completionCue ? (
         <CompletionOverlay key={completionCue.id} completedMode={completionCue.completedMode} />
       ) : null}

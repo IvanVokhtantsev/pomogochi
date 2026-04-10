@@ -13,6 +13,8 @@ declare global {
       getMiniModeEnabled: () => Promise<boolean>;
       onMiniModeChanged: (callback: (enabled: boolean) => void) => () => void;
       playTimerSound: () => Promise<void>;
+      enterTimerAttentionMode: () => Promise<void>;
+      restoreFromTimerAttentionMode: () => Promise<void>;
     };
   }
 }
