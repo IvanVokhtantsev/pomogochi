@@ -424,7 +424,7 @@ body.compact-viewport #root {
   height: 100%;
   min-height: 0;
   max-height: none;
-  padding: 5px 7px;
+  padding: 5px 8px;
   border-radius: 14px;
   display: block;
   overflow: hidden;
@@ -832,9 +832,11 @@ h1 {
 }
 
 .panel--mini .running-badge {
-  min-width: 54px;
-  padding: 4px 8px;
-  font-size: 10px;
+  min-width: 26px;
+  min-height: 18px;
+  padding: 0 7px;
+  font-size: 9px;
+  line-height: 1;
 }
 
 .running-badge--live {
@@ -844,10 +846,10 @@ h1 {
 
 .compact-shell {
   display: grid;
-  gap: 2px;
+  gap: 3px;
   height: 100%;
   min-height: 0;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
 .compact-topline {
@@ -855,6 +857,7 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 6px;
+  min-height: 22px;
 }
 
 .compact-brand {
@@ -881,12 +884,15 @@ h1 {
   font-weight: 760;
   letter-spacing: -0.03em;
   text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .compact-main-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 4px;
+  gap: 6px;
   align-items: center;
   min-height: 0;
 }
@@ -897,9 +903,10 @@ h1 {
 
 .compact-side {
   display: grid;
-  gap: 3px;
+  gap: 2px;
   justify-items: end;
   align-content: center;
+  min-width: 38px;
 }
 
 .compact-meta-row {
@@ -912,54 +919,126 @@ h1 {
 
 .timer--compact {
   margin: 0;
-  font-size: clamp(54px, 18vw, 68px);
-  line-height: 0.86;
+  font-size: clamp(44px, 14.5vw, 52px);
+  line-height: 0.82;
   text-align: left;
+  font-variant-numeric: tabular-nums;
 }
 
 .compact-stats {
   color: rgba(51, 65, 85, 0.92);
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 650;
   text-align: center;
+  white-space: nowrap;
 }
 
 .compact-footer {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 3px;
+  grid-template-columns: auto auto;
+  justify-content: space-between;
+  gap: 6px;
   align-items: center;
+  min-height: 28px;
 }
 
 .mode-switch {
   display: inline-grid;
-  grid-template-columns: repeat(3, 21px);
-  gap: 1px;
-  padding: 2px;
+  grid-template-columns: repeat(3, 24px);
+  gap: 3px;
+  padding: 0;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.46);
-  border: 1px solid rgba(255, 255, 255, 0.62);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 .mode-switch button {
   min-width: 0;
-  min-height: 21px;
+  width: 24px;
+  min-height: 24px;
   padding: 0;
-  border: 0;
+  border: 1px solid rgba(255, 255, 255, 0.64);
   border-radius: 999px;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.48);
   color: rgba(51, 65, 85, 0.9);
   cursor: pointer;
-  font-size: 8px;
-  font-weight: 760;
+  font-size: 9px;
+  font-weight: 820;
   line-height: 1;
+  box-shadow:
+    0 6px 12px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
 }
 
 .mode-switch button.active {
   background: linear-gradient(135deg, #ff4d4f, #e11d48);
   color: white;
   box-shadow: 0 6px 12px rgba(225, 29, 72, 0.28);
+}
+
+.compact-control-cluster {
+  display: inline-grid;
+  grid-template-columns: repeat(3, 28px);
+  gap: 4px;
+}
+
+.compact-icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.64);
+  border-radius: 999px;
+  cursor: pointer;
+  color: rgba(30, 41, 59, 0.96);
+  background: rgba(255, 255, 255, 0.52);
+  font-size: 14px;
+  font-weight: 850;
+  line-height: 1;
+  box-shadow:
+    0 7px 14px rgba(15, 23, 42, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.66);
+  transition:
+    transform 120ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease;
+}
+
+.compact-icon-button:hover {
+  transform: translateY(-1px);
+}
+
+.compact-icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+  transform: none;
+  box-shadow: none;
+}
+
+.compact-icon-button--restore {
+  width: 26px;
+  min-width: 26px;
+  height: 26px;
+  font-size: 13px;
+}
+
+.compact-icon-button--active,
+.compact-icon-button--primary {
+  color: white;
+  background: linear-gradient(135deg, #ff4d4f, #e11d48);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 9px 18px rgba(225, 29, 72, 0.3);
+}
+
+.compact-icon-button--pause {
+  color: white;
+  background: linear-gradient(135deg, #0f172a, #334155);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 9px 18px rgba(15, 23, 42, 0.25);
 }
 
 .timer {

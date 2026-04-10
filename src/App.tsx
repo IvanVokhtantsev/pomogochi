@@ -138,6 +138,7 @@ const COPY = {
       normalView: "Обычный",
       desktopOnly: "Desktop",
       modeAria: "Режим таймера",
+      controlsAria: "Управление таймером",
       start: "Старт",
       pause: "Пауза",
       reset: "Сброс",
@@ -223,6 +224,7 @@ const COPY = {
       normalView: "Normal",
       desktopOnly: "Desktop",
       modeAria: "Timer mode",
+      controlsAria: "Timer controls",
       start: "Start",
       pause: "Pause",
       reset: "Reset",
@@ -682,7 +684,7 @@ function TimerPanel({
             </div>
             {onToggleMiniMode ? (
               <button
-                className={`mode-toggle mode-toggle--compact ${miniModeEnabled ? "mode-toggle--active" : ""}`}
+                className={`compact-icon-button compact-icon-button--restore ${miniModeEnabled ? "compact-icon-button--active" : ""}`}
                 onClick={onToggleMiniMode}
                 disabled={!isDesktopApp}
                 title={
@@ -738,24 +740,28 @@ function TimerPanel({
               </button>
             </div>
 
-            <div className="controls controls--mini controls--mini-compact">
+            <div className="compact-control-cluster" aria-label={copy.timer.controlsAria}>
               {!isRunning ? (
-                <button className="primary-button" onClick={onStart} title={copy.timer.start}>
+                <button
+                  className="compact-icon-button compact-icon-button--primary"
+                  onClick={onStart}
+                  title={copy.timer.start}
+                >
                   {copy.timer.compactStart}
                 </button>
               ) : (
                 <button
-                  className="primary-button primary-button--pause"
+                  className="compact-icon-button compact-icon-button--pause"
                   onClick={onPause}
                   title={copy.timer.pause}
                 >
                   {copy.timer.compactPause}
                 </button>
               )}
-              <button onClick={onReset} title={copy.timer.reset}>
+              <button className="compact-icon-button" onClick={onReset} title={copy.timer.reset}>
                 {copy.timer.compactReset}
               </button>
-              <button onClick={onSkip} title={copy.timer.skip}>
+              <button className="compact-icon-button" onClick={onSkip} title={copy.timer.skip}>
                 {copy.timer.compactSkip}
               </button>
             </div>
