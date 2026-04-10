@@ -34,7 +34,7 @@ jobs:
       - name: Build web app
         run: npm run build
         env:
-          VITE_BASE_PATH: /pomodoro-app/
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
