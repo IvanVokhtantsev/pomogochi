@@ -479,7 +479,7 @@ function MarketingPage({ children }: { children: ReactNode }) {
               Скачать приложение
             </a>
             <a className="landing-button landing-button--secondary" href="#try-online">
-              Попробовать онлайн
+              Открыть демо
             </a>
           </div>
 
@@ -538,8 +538,8 @@ function MarketingPage({ children }: { children: ReactNode }) {
 
       <section className="landing-demo" id="try-online" aria-labelledby="demo-title">
         <div className="landing-demo-copy">
-          <p className="landing-kicker">Online demo</p>
-          <h2 id="demo-title">Попробовать онлайн</h2>
+          <p className="landing-kicker">Browser timer</p>
+          <h2 id="demo-title">Таймер в браузере</h2>
           <p>
             Это тот же таймер: фокус, короткий перерыв, длинный перерыв, звук и сохранение
             состояния в браузере. Для настоящего окна поверх всех приложений скачай desktop app.
@@ -792,7 +792,7 @@ export default function App() {
         mode={timerState.mode}
         title={title}
         eyebrow={isDesktopApp ? "Desktop timer" : "Online demo"}
-        heading={isDesktopApp ? "Pomodoro Timer" : "Попробовать онлайн"}
+        heading={isDesktopApp ? "Pomodoro Timer" : "Онлайн-таймер"}
         subtitle={
           isDesktopApp
             ? "Переключай текущее окно в компактный always-on-top режим, когда нужен таймер без шума."
