@@ -19,6 +19,8 @@ const COMPACT_BOUNDS = {
   height: 236,
 };
 
+const DEV_ICON_PATH = path.join(__dirname, "../build/icon.png");
+
 let mainWindow: BrowserWindow | null = null;
 let compactModeEnabled = false;
 
@@ -30,6 +32,14 @@ function sendCompactModeState(enabled: boolean) {
 
 function getPreloadPath() {
   return path.join(__dirname, "preload.cjs");
+}
+
+function getWindowIcon() {
+  if (process.platform === "darwin") {
+    return undefined;
+  }
+
+  return isDev ? DEV_ICON_PATH : undefined;
 }
 
 function loadRenderer(window: BrowserWindow) {
@@ -79,6 +89,7 @@ function createMainWindow() {
     useContentSize: true,
     autoHideMenuBar: true,
     backgroundColor: "#eef2ff",
+    icon: getWindowIcon(),
     webPreferences: {
       preload: getPreloadPath(),
       contextIsolation: true,
@@ -112,6 +123,10 @@ function showMainWindow() {
 }
 
 app.whenReady().then(() => {
+  if (isDev && process.platform === "darwin") {
+    app.dock?.setIcon(DEV_ICON_PATH);
+  }
+
   createMainWindow();
 
   ipcMain.on("window:show-main", () => {

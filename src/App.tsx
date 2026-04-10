@@ -14,6 +14,11 @@ type TimerState = {
   statsDayKey: string;
 };
 
+type CompletionCue = {
+  id: number;
+  completedMode: Mode;
+};
+
 type TimerPanelProps = {
   mode: Mode;
   title: string;
@@ -184,6 +189,20 @@ function advanceTimer(state: TimerState) {
   };
 }
 
+function getCompletionCopy(mode: Mode) {
+  if (mode === "focus") {
+    return {
+      title: "Фокус завершён",
+      message: "Пора переключиться и дать голове выдохнуть.",
+    };
+  }
+
+  return {
+    title: "Перерыв завершён",
+    message: "Можно возвращаться к следующему фокус-циклу.",
+  };
+}
+
 function scheduleBellNote(
   ctx: AudioContext,
   startAt: number,
@@ -276,6 +295,20 @@ async function playCompletionTone() {
   }
 
   await Promise.allSettled(toneTasks);
+}
+
+function CompletionOverlay({ completedMode }: { completedMode: Mode }) {
+  const copy = getCompletionCopy(completedMode);
+
+  return (
+    <div className="completion-overlay" aria-live="assertive" role="status">
+      <div className="completion-overlay-card">
+        <span className="completion-overlay-kicker">Timer alert</span>
+        <strong>{copy.title}</strong>
+        <span>{copy.message}</span>
+      </div>
+    </div>
+  );
 }
 
 function TimerPanel({
@@ -560,9 +593,20 @@ export default function App() {
   const isDesktopApp = Boolean(window.electronAPI?.isDesktop);
   const [timerState, setTimerState] = useState<TimerState>(() => readStoredState());
   const [miniModeEnabled, setMiniModeEnabled] = useState(false);
+  const [completionCue, setCompletionCue] = useState<CompletionCue | null>(null);
 
   const channelRef = useRef<BroadcastChannel | null>(null);
   const lastSerializedRef = useRef(JSON.stringify(timerState));
+  const completionCueIdRef = useRef(0);
+  const completionCueTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (completionCueTimeoutRef.current !== null) {
+        window.clearTimeout(completionCueTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const syncDailyStats = () => {
@@ -661,7 +705,7 @@ export default function App() {
     }
 
     const tick = () => {
-      let completed = false;
+      let completedMode: Mode | null = null;
 
       setTimerState((current) => {
         const nextCurrent = normalizeDailyStats(current);
@@ -672,7 +716,7 @@ export default function App() {
 
         const remaining = getRemainingSeconds(nextCurrent.endTime);
         if (remaining <= 0) {
-          completed = true;
+          completedMode = nextCurrent.mode;
           return advanceTimer(nextCurrent);
         }
 
@@ -686,7 +730,19 @@ export default function App() {
         };
       });
 
-      if (completed) {
+      if (completedMode !== null) {
+        completionCueIdRef.current += 1;
+        const cueId = completionCueIdRef.current;
+        setCompletionCue({ id: cueId, completedMode });
+
+        if (completionCueTimeoutRef.current !== null) {
+          window.clearTimeout(completionCueTimeoutRef.current);
+        }
+
+        completionCueTimeoutRef.current = window.setTimeout(() => {
+          setCompletionCue((current) => (current?.id === cueId ? null : current));
+        }, 4200);
+
         void playCompletionTone();
       }
     };
@@ -817,6 +873,9 @@ export default function App() {
   if (!isDesktopApp) {
     return (
       <main className="container container--landing">
+        {completionCue ? (
+          <CompletionOverlay key={completionCue.id} completedMode={completionCue.completedMode} />
+        ) : null}
         <MarketingPage>{timerPanel}</MarketingPage>
       </main>
     );
@@ -824,6 +883,9 @@ export default function App() {
 
   return (
     <main className={`container ${miniModeEnabled ? "container--mini" : ""}`}>
+      {completionCue ? (
+        <CompletionOverlay key={completionCue.id} completedMode={completionCue.completedMode} />
+      ) : null}
       {timerPanel}
     </main>
   );
