@@ -1,25 +1,36 @@
 # Pomodoro App
 
-Desktop Pomodoro timer built with React, TypeScript, Vite, and Electron.
+Desktop Pomodoro timer for people who want the timer to stay visible while they work.
 
-The app has a regular timer view and a compact always-on-top mode for keeping the timer visible while working in other apps.
+The key feature is not the sound. It is the desktop behavior: a compact always-on-top timer that stays above other windows, plus a full-screen attention view when a cycle ends.
 
-## Web Version
+## Highlights
 
-The browser version is a landing page with an online timer demo. It is deployed to GitHub Pages from the `main` branch.
+- Compact always-on-top mode for macOS and Windows.
+- Full-screen attention mode when a timer finishes.
+- Slide-to-start control so the next stage starts intentionally, not from an accidental click.
+- Focus, short break, and long break modes.
+- Daily completed-session counter with reset after 05:00 local time.
+- Synthesized completion sound as a secondary cue.
+- Russian and English UI with an in-app language switch.
+- Browser demo on GitHub Pages, with true always-on-top available only in the desktop app.
 
-The true always-on-top mode is available in the desktop app because browsers do not reliably support keeping a page above every other app window.
+## Скачать / Download
 
-## Features
+Latest desktop builds are published in GitHub Releases:
 
-- Focus, short break, and long break timer modes.
-- Compact always-on-top window mode with a 16:9 layout.
-- Start, pause, reset, and skip controls.
-- Synthesized completion sound when a timer finishes.
-- Completed focus-session counter for the current day.
-- Daily stats reset after 05:00 local time.
-- Local state persistence between launches.
-- Desktop builds for macOS, Windows, and Linux through Electron Builder.
+https://github.com/IvanVokhtantsev/pomodoro-app/releases/latest
+
+The website and browser demo are published with GitHub Pages.
+
+## Почему desktop app?
+
+Браузер не может надёжно держать вкладку поверх всех приложений. Desktop-версия может:
+
+- держать компактный таймер поверх других окон;
+- запретить случайное сворачивание compact-режима;
+- развернуть окно поверх экрана, когда цикл завершён;
+- вернуть окно обратно в обычный или compact-режим после slide-to-start.
 
 ## Development
 
@@ -47,9 +58,9 @@ This starts the Vite renderer and the Electron desktop shell together.
 
 ## Deployment
 
-GitHub Pages is configured with `.github/workflows/deploy.yml`. The workflow builds `dist` with the `/pomodoro-app/` base path and publishes it as the web app.
+GitHub Pages is configured with `.github/workflows/deploy.yml`. The workflow builds `dist` with the `/pomodoro-app/` base path and publishes the landing page plus browser demo.
 
-Desktop downloads should be attached to GitHub Releases after running `npm run dist`.
+Desktop downloads are attached to GitHub Releases after packaging with Electron Builder.
 
 ## Build Output
 
@@ -57,6 +68,7 @@ Generated folders are ignored by git:
 
 - `dist` for the Vite renderer build.
 - `electron-dist` for compiled Electron files.
+- `release` for packaged desktop artifacts.
 - `node_modules` for installed dependencies.
 
 ## Tech Stack

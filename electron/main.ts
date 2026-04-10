@@ -16,8 +16,8 @@ const DEFAULT_BOUNDS = {
 };
 
 const COMPACT_BOUNDS = {
-  width: 420,
-  height: 236,
+  width: 360,
+  height: 150,
 };
 
 const DEV_ICON_PATH = path.join(__dirname, "../build/icon.png");
@@ -70,6 +70,7 @@ function applyCompactMode(enabled: boolean) {
   mainWindow.setAlwaysOnTop(enabled, enabled ? "floating" : "normal");
   mainWindow.setResizable(!enabled);
   mainWindow.setMaximizable(!enabled);
+  mainWindow.setMinimizable(!enabled);
   mainWindow.setFullScreenable(!enabled);
 
   if (enabled) {
@@ -109,6 +110,7 @@ function enterTimerAttentionMode() {
 
   window.setResizable(true);
   window.setMaximizable(true);
+  window.setMinimizable(false);
   window.setFullScreenable(true);
   window.setMinimumSize(360, 220);
   window.setAlwaysOnTop(true, "screen-saver");
@@ -159,6 +161,7 @@ function restoreFromTimerAttentionMode() {
   mainWindow.setAlwaysOnTop(false, "normal");
   mainWindow.setResizable(true);
   mainWindow.setMaximizable(true);
+  mainWindow.setMinimizable(true);
   mainWindow.setFullScreenable(true);
   mainWindow.setMinimumSize(DEFAULT_BOUNDS.minWidth, DEFAULT_BOUNDS.minHeight);
 

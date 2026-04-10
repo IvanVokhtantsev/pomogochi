@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import "./App.css";
 
 type Mode = "focus" | "shortBreak" | "longBreak";
+type Language = "ru" | "en";
 
 type TimerState = {
   mode: Mode;
@@ -19,6 +20,12 @@ type CompletionCue = {
   completedMode: Mode;
 };
 
+type SlideToStartProps = {
+  label: string;
+  completeLabel: string;
+  onComplete: () => void;
+};
+
 type TimerPanelProps = {
   mode: Mode;
   title: string;
@@ -32,12 +39,15 @@ type TimerPanelProps = {
   isDesktopApp: boolean;
   miniModeEnabled: boolean;
   showMiniModeControl?: boolean;
+  language: Language;
+  copy: AppCopy;
   onSwitchMode: (mode: Mode) => void;
   onStart: () => void;
   onPause: () => void;
   onReset: () => void;
   onSkip: () => void;
   onToggleMiniMode?: () => void;
+  onToggleLanguage: () => void;
 };
 
 const DURATIONS: Record<Mode, number> = {
@@ -59,6 +69,7 @@ const DEFAULT_STATE: TimerState = {
 };
 
 const STORAGE_KEY = "pomodoro_state_v2";
+const LANGUAGE_STORAGE_KEY = "pomodoro_language_v1";
 const SYNC_CHANNEL = "pomodoro_sync_v2";
 const DOWNLOAD_URL = "https://github.com/IvanVokhtantsev/pomodoro-app/releases/latest";
 const REPOSITORY_URL = "https://github.com/IvanVokhtantsev/pomodoro-app";
@@ -66,6 +77,181 @@ const WINDOW_ID =
   typeof crypto !== "undefined" && "randomUUID" in crypto
     ? crypto.randomUUID()
     : `window-${Math.random().toString(36).slice(2)}`;
+
+const COPY = {
+  ru: {
+    languageLabel: "Переключить на English",
+    modes: {
+      focus: "Фокус",
+      shortBreak: "Короткий перерыв",
+      longBreak: "Длинный перерыв",
+    },
+    landing: {
+      kicker: "Pomodoro App",
+      title: "Фокус-таймер, который не теряется среди окон",
+      lead:
+        "Компактное desktop-окно остаётся поверх остальных приложений, а в конце цикла раскрывается в заметный полноэкранный сигнал.",
+      download: "Скачать приложение",
+      demo: "Открыть демо",
+      notePrefix: "Важно:",
+      note:
+        "настоящий always-on-top и полноэкранный сигнал работают в desktop-версии. В браузере можно попробовать механику таймера.",
+      showcaseMode: "Фокус",
+      showcaseStart: "Старт",
+      showcaseReset: "Сброс",
+      showcaseSkip: "Пропуск",
+      features: [
+        {
+          title: "Поверх всех окон",
+          text: "Compact-режим держит таймер видимым во время работы в других приложениях.",
+        },
+        {
+          title: "Сильный визуальный сигнал",
+          text: "Когда цикл заканчивается, окно разворачивается поверх экрана и ждёт действия.",
+        },
+        {
+          title: "Слайд вместо случайного клика",
+          text: "Чтобы начать следующий этап, нужно осознанно перетащить ползунок.",
+        },
+      ],
+      demoKicker: "Browser timer",
+      demoTitle: "Таймер в браузере",
+      demoText:
+        "Это онлайн-демо с фокусом, перерывами, звуком и сохранением состояния. Для окна поверх всех приложений скачай desktop app.",
+      footerStack: "React + TypeScript + Vite + Electron",
+    },
+    timer: {
+      desktopEyebrow: "Desktop timer",
+      onlineEyebrow: "Online demo",
+      desktopHeading: "Pomodoro Timer",
+      onlineHeading: "Онлайн-таймер",
+      desktopSubtitle:
+        "Переключай текущее окно в компактный always-on-top режим, когда нужен таймер без шума.",
+      onlineSubtitle:
+        "Браузерная версия таймера. Настоящий always-on-top доступен в desktop-приложении.",
+      enableAlwaysOnTop: "Включить always-on-top",
+      disableAlwaysOnTop: "Выключить always-on-top",
+      alwaysOnTopUnavailable: "Always-on-top доступен в desktop app",
+      openCompactTitle: "Открыть компактное окно поверх остальных приложений",
+      restoreNormalTitle: "Вернуть обычный размер окна",
+      desktopOnlyTitle: "Режим доступен только в desktop-приложении",
+      normalView: "Обычный",
+      desktopOnly: "Desktop",
+      modeAria: "Режим таймера",
+      start: "Старт",
+      pause: "Пауза",
+      reset: "Сброс",
+      skip: "Пропустить",
+      completedToday: "Завершено сегодня",
+      today: "Сегодня",
+      todayCompact: "Д",
+      running: "Идёт",
+      paused: "Пауза",
+      runningShort: "●",
+      pausedShort: "Ⅱ",
+      compactStart: "▶",
+      compactPause: "Ⅱ",
+      compactReset: "↺",
+      compactSkip: "»",
+    },
+    completion: {
+      kicker: "Timer alert",
+      focusTitle: "Фокус завершён",
+      breakTitle: "Перерыв завершён",
+      focusMessage: "Пора переключиться и дать голове выдохнуть.",
+      breakMessage: "Можно возвращаться к следующему фокус-циклу.",
+      slideLabel: "Потяни, чтобы начать следующий этап",
+      slideComplete: "Стартуем",
+    },
+  },
+  en: {
+    languageLabel: "Switch to Russian",
+    modes: {
+      focus: "Focus",
+      shortBreak: "Short break",
+      longBreak: "Long break",
+    },
+    landing: {
+      kicker: "Pomodoro App",
+      title: "A focus timer that does not disappear behind your work",
+      lead:
+        "The compact desktop window stays above other apps, then expands into a clear full-screen cue when a session ends.",
+      download: "Download app",
+      demo: "Open demo",
+      notePrefix: "Note:",
+      note:
+        "true always-on-top and the full-screen cue are available in the desktop app. The browser demo lets you try the timer flow.",
+      showcaseMode: "Focus",
+      showcaseStart: "Start",
+      showcaseReset: "Reset",
+      showcaseSkip: "Skip",
+      features: [
+        {
+          title: "Above every window",
+          text: "Compact mode keeps the timer visible while you work in other apps.",
+        },
+        {
+          title: "Strong visual cue",
+          text: "When a cycle ends, the window expands above the screen and waits for action.",
+        },
+        {
+          title: "Slide, not a stray click",
+          text: "Starting the next stage requires an intentional drag gesture.",
+        },
+      ],
+      demoKicker: "Browser timer",
+      demoTitle: "Try it online",
+      demoText:
+        "This online demo includes focus, breaks, sound, and saved state. Download the desktop app for true always-on-top.",
+      footerStack: "React + TypeScript + Vite + Electron",
+    },
+    timer: {
+      desktopEyebrow: "Desktop timer",
+      onlineEyebrow: "Online demo",
+      desktopHeading: "Pomodoro Timer",
+      onlineHeading: "Online timer",
+      desktopSubtitle:
+        "Switch the current window into a compact always-on-top timer when you need focus without noise.",
+      onlineSubtitle:
+        "Browser timer demo. True always-on-top is available in the desktop app.",
+      enableAlwaysOnTop: "Enable always-on-top",
+      disableAlwaysOnTop: "Disable always-on-top",
+      alwaysOnTopUnavailable: "Always-on-top needs the desktop app",
+      openCompactTitle: "Open the compact always-on-top window",
+      restoreNormalTitle: "Return to the regular window size",
+      desktopOnlyTitle: "This mode is available only in the desktop app",
+      normalView: "Normal",
+      desktopOnly: "Desktop",
+      modeAria: "Timer mode",
+      start: "Start",
+      pause: "Pause",
+      reset: "Reset",
+      skip: "Skip",
+      completedToday: "Completed today",
+      today: "Today",
+      todayCompact: "D",
+      running: "Running",
+      paused: "Paused",
+      runningShort: "●",
+      pausedShort: "Ⅱ",
+      compactStart: "▶",
+      compactPause: "Ⅱ",
+      compactReset: "↺",
+      compactSkip: "»",
+    },
+    completion: {
+      kicker: "Timer alert",
+      focusTitle: "Focus complete",
+      breakTitle: "Break complete",
+      focusMessage: "Time to switch context and let your brain breathe.",
+      breakMessage: "You can return to the next focus cycle.",
+      slideLabel: "Slide to start the next stage",
+      slideComplete: "Starting",
+    },
+  },
+} as const;
+
+type AppCopy = (typeof COPY)[Language];
 
 function formatTime(totalSeconds: number) {
   const m = Math.floor(totalSeconds / 60)
@@ -158,6 +344,15 @@ function readStoredState() {
   }
 }
 
+function readStoredLanguage(): Language {
+  const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  if (stored === "ru" || stored === "en") {
+    return stored;
+  }
+
+  return navigator.language.toLowerCase().startsWith("ru") ? "ru" : "en";
+}
+
 function getRemainingSeconds(endTime: number) {
   return Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
 }
@@ -189,17 +384,17 @@ function advanceTimer(state: TimerState) {
   };
 }
 
-function getCompletionCopy(mode: Mode) {
+function getCompletionCopy(mode: Mode, copy: AppCopy) {
   if (mode === "focus") {
     return {
-      title: "Фокус завершён",
-      message: "Пора переключиться и дать голове выдохнуть.",
+      title: copy.completion.focusTitle,
+      message: copy.completion.focusMessage,
     };
   }
 
   return {
-    title: "Перерыв завершён",
-    message: "Можно возвращаться к следующему фокус-циклу.",
+    title: copy.completion.breakTitle,
+    message: copy.completion.breakMessage,
   };
 }
 
@@ -297,16 +492,157 @@ async function playCompletionTone() {
   await Promise.allSettled(toneTasks);
 }
 
-function CompletionOverlay({ completedMode }: { completedMode: Mode }) {
-  const copy = getCompletionCopy(completedMode);
+function LanguageToggle({
+  language,
+  onToggle,
+  className = "",
+  label,
+}: {
+  language: Language;
+  onToggle: () => void;
+  className?: string;
+  label: string;
+}) {
+  return (
+    <button
+      className={`language-toggle ${className}`}
+      type="button"
+      onClick={onToggle}
+      aria-label={label}
+      title={label}
+    >
+      <span className={language === "ru" ? "active" : ""}>RU</span>
+      <span className={language === "en" ? "active" : ""}>EN</span>
+    </button>
+  );
+}
+
+function SlideToStart({ label, completeLabel, onComplete }: SlideToStartProps) {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const completedRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const [progress, setProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [trackWidth, setTrackWidth] = useState(0);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) {
+      return;
+    }
+
+    const syncTrackWidth = () => {
+      setTrackWidth(track.getBoundingClientRect().width);
+    };
+
+    syncTrackWidth();
+    const resizeObserver = new ResizeObserver(syncTrackWidth);
+    resizeObserver.observe(track);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  const updateProgress = (clientX: number) => {
+    const track = trackRef.current;
+    if (!track || completedRef.current) {
+      return;
+    }
+
+    const rect = track.getBoundingClientRect();
+    const dragDistance = Math.max(1, rect.width - 58);
+    const nextProgress = Math.min(1, Math.max(0, (clientX - dragStartXRef.current) / dragDistance));
+    setProgress(nextProgress);
+
+    if (nextProgress >= 0.92) {
+      completedRef.current = true;
+      setProgress(1);
+      onComplete();
+    }
+  };
+
+  return (
+    <div
+      ref={trackRef}
+      className={`slide-to-start ${isDragging ? "slide-to-start--dragging" : ""}`}
+      style={
+        {
+          "--slide-progress": `${progress * 100}%`,
+          "--slide-knob-left": `${4 + progress * Math.max(0, trackWidth - 58)}px`,
+        } as CSSProperties
+      }
+      role="slider"
+      aria-label={label}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(progress * 100)}
+      tabIndex={0}
+      onPointerDown={(event) => {
+        event.currentTarget.setPointerCapture(event.pointerId);
+        dragStartXRef.current = event.clientX;
+        setIsDragging(true);
+      }}
+      onPointerMove={(event) => {
+        if (isDragging) {
+          updateProgress(event.clientX);
+        }
+      }}
+      onPointerUp={(event) => {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+        setIsDragging(false);
+
+        if (!completedRef.current) {
+          setProgress(0);
+        }
+      }}
+      onPointerCancel={() => {
+        setIsDragging(false);
+
+        if (!completedRef.current) {
+          setProgress(0);
+        }
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          completedRef.current = true;
+          setProgress(1);
+          onComplete();
+        }
+      }}
+    >
+      <span className="slide-to-start-fill" />
+      <span className="slide-to-start-label">
+        {progress >= 0.92 ? completeLabel : label}
+      </span>
+      <span className="slide-to-start-knob">→</span>
+    </div>
+  );
+}
+
+function CompletionOverlay({
+  completedMode,
+  copy,
+  onContinue,
+}: {
+  completedMode: Mode;
+  copy: AppCopy;
+  onContinue: () => void;
+}) {
+  const completionCopy = getCompletionCopy(completedMode, copy);
 
   return (
     <div className="completion-overlay" aria-live="assertive" role="status">
       <div className="completion-overlay-card">
-        <span className="completion-overlay-kicker">Timer alert</span>
-        <strong>{copy.title}</strong>
-        <span>{copy.message}</span>
-        <em>Нажми “Старт”, чтобы перейти дальше</em>
+        <span className="completion-overlay-kicker">{copy.completion.kicker}</span>
+        <strong>{completionCopy.title}</strong>
+        <span>{completionCopy.message}</span>
+        <SlideToStart
+          label={copy.completion.slideLabel}
+          completeLabel={copy.completion.slideComplete}
+          onComplete={onContinue}
+        />
       </div>
     </div>
   );
@@ -325,12 +661,15 @@ function TimerPanel({
   isDesktopApp,
   miniModeEnabled,
   showMiniModeControl = true,
+  language,
+  copy,
   onSwitchMode,
   onStart,
   onPause,
   onReset,
   onSkip,
   onToggleMiniMode,
+  onToggleLanguage,
 }: TimerPanelProps) {
   if (isCompactMode) {
     return (
@@ -348,11 +687,11 @@ function TimerPanel({
                 disabled={!isDesktopApp}
                 title={
                   isDesktopApp
-                    ? "Вернуть обычный размер окна"
-                    : "Режим доступен только в desktop-приложении"
+                    ? copy.timer.restoreNormalTitle
+                    : copy.timer.desktopOnlyTitle
                 }
               >
-                {isDesktopApp ? "Обычный" : "Desktop"}
+                {isDesktopApp ? "↗" : copy.timer.desktopOnly}
               </button>
             ) : null}
           </div>
@@ -362,33 +701,38 @@ function TimerPanel({
               <div className="timer timer--compact">{formatTime(secondsLeft)}</div>
             </div>
             <div className="compact-side">
-              <span className={`running-badge ${isRunning ? "running-badge--live" : ""}`}>
-                {isRunning ? "Идёт" : "Пауза"}
+              <span
+                className={`running-badge ${isRunning ? "running-badge--live" : ""}`}
+                title={isRunning ? copy.timer.running : copy.timer.paused}
+              >
+                {isRunning ? copy.timer.runningShort : copy.timer.pausedShort}
               </span>
-              <span className="compact-stats">Сегодня {completedPomodoros}</span>
+              <span className="compact-stats" title={`${copy.timer.today} ${completedPomodoros}`}>
+                {copy.timer.todayCompact} {completedPomodoros}
+              </span>
             </div>
           </div>
 
           <div className="compact-footer">
-            <div className="mode-switch" aria-label="Режим таймера">
+            <div className="mode-switch" aria-label={copy.timer.modeAria}>
               <button
                 className={mode === "focus" ? "active" : ""}
                 onClick={() => onSwitchMode("focus")}
-                title="Фокус"
+                title={copy.modes.focus}
               >
                 F
               </button>
               <button
                 className={mode === "shortBreak" ? "active" : ""}
                 onClick={() => onSwitchMode("shortBreak")}
-                title="Короткий перерыв"
+                title={copy.modes.shortBreak}
               >
                 S
               </button>
               <button
                 className={mode === "longBreak" ? "active" : ""}
                 onClick={() => onSwitchMode("longBreak")}
-                title="Длинный перерыв"
+                title={copy.modes.longBreak}
               >
                 L
               </button>
@@ -396,16 +740,24 @@ function TimerPanel({
 
             <div className="controls controls--mini controls--mini-compact">
               {!isRunning ? (
-                <button className="primary-button" onClick={onStart}>
-                  Старт
+                <button className="primary-button" onClick={onStart} title={copy.timer.start}>
+                  {copy.timer.compactStart}
                 </button>
               ) : (
-                <button className="primary-button primary-button--pause" onClick={onPause}>
-                  Пауза
+                <button
+                  className="primary-button primary-button--pause"
+                  onClick={onPause}
+                  title={copy.timer.pause}
+                >
+                  {copy.timer.compactPause}
                 </button>
               )}
-              <button onClick={onReset}>Сброс</button>
-              <button onClick={onSkip}>Пропуск</button>
+              <button onClick={onReset} title={copy.timer.reset}>
+                {copy.timer.compactReset}
+              </button>
+              <button onClick={onSkip} title={copy.timer.skip}>
+                {copy.timer.compactSkip}
+              </button>
             </div>
           </div>
         </div>
@@ -423,6 +775,11 @@ function TimerPanel({
         </div>
 
         <div className="panel-actions">
+          <LanguageToggle
+            language={language}
+            onToggle={onToggleLanguage}
+            label={copy.languageLabel}
+          />
           {showMiniModeControl && onToggleMiniMode ? (
             <button
               className={`mode-toggle ${miniModeEnabled ? "mode-toggle--active" : ""}`}
@@ -430,15 +787,15 @@ function TimerPanel({
               disabled={!isDesktopApp}
               title={
                 isDesktopApp
-                  ? "Открыть компактное окно поверх остальных приложений"
-                  : "Режим доступен только в desktop-приложении"
+                  ? copy.timer.openCompactTitle
+                  : copy.timer.desktopOnlyTitle
               }
             >
               {isDesktopApp
                 ? miniModeEnabled
-                  ? "Выключить always-on-top"
-                  : "Включить always-on-top"
-                : "Always-on-top доступен в desktop app"}
+                  ? copy.timer.disableAlwaysOnTop
+                  : copy.timer.enableAlwaysOnTop
+                : copy.timer.alwaysOnTopUnavailable}
             </button>
           ) : null}
         </div>
@@ -449,26 +806,26 @@ function TimerPanel({
           className={mode === "focus" ? "active" : ""}
           onClick={() => onSwitchMode("focus")}
         >
-          Фокус
+          {copy.modes.focus}
         </button>
         <button
           className={mode === "shortBreak" ? "active" : ""}
           onClick={() => onSwitchMode("shortBreak")}
         >
-          Короткий перерыв
+          {copy.modes.shortBreak}
         </button>
         <button
           className={mode === "longBreak" ? "active" : ""}
           onClick={() => onSwitchMode("longBreak")}
         >
-          Длинный перерыв
+          {copy.modes.longBreak}
         </button>
       </div>
 
       <div className="status-strip">
         <p className="mode">{title}</p>
         <span className={`running-badge ${isRunning ? "running-badge--live" : ""}`}>
-          {isRunning ? "Идёт" : "Пауза"}
+          {isRunning ? copy.timer.running : copy.timer.paused}
         </span>
       </div>
 
@@ -477,49 +834,62 @@ function TimerPanel({
       <div className="controls">
         {!isRunning ? (
           <button className="primary-button" onClick={onStart}>
-            Старт
+            {copy.timer.start}
           </button>
         ) : (
           <button className="primary-button primary-button--pause" onClick={onPause}>
-            Пауза
+            {copy.timer.pause}
           </button>
         )}
-        <button onClick={onReset}>Сброс</button>
-        <button onClick={onSkip}>Пропустить</button>
+        <button onClick={onReset}>{copy.timer.reset}</button>
+        <button onClick={onSkip}>{copy.timer.skip}</button>
       </div>
 
       <div className="stats-card">
-        <span className="stats-label">Завершено сегодня</span>
+        <span className="stats-label">{copy.timer.completedToday}</span>
         <strong className="stats-value">{completedPomodoros}</strong>
       </div>
     </section>
   );
 }
 
-function MarketingPage({ children }: { children: ReactNode }) {
+function MarketingPage({
+  children,
+  language,
+  copy,
+  onToggleLanguage,
+}: {
+  children: ReactNode;
+  language: Language;
+  copy: AppCopy;
+  onToggleLanguage: () => void;
+}) {
   return (
     <div className="landing">
       <section className="landing-hero" aria-labelledby="landing-title">
         <div className="landing-copy">
-          <p className="landing-kicker">Pomodoro App</p>
-          <h1 id="landing-title">Фокус-таймер, который не теряется среди окон</h1>
-          <p className="landing-lead">
-            Запускай Pomodoro прямо в браузере или скачай desktop-приложение, чтобы компактный
-            таймер оставался поверх экрана во время работы.
-          </p>
+          <div className="landing-toolbar">
+            <p className="landing-kicker">{copy.landing.kicker}</p>
+            <LanguageToggle
+              language={language}
+              onToggle={onToggleLanguage}
+              label={copy.languageLabel}
+            />
+          </div>
+          <h1 id="landing-title">{copy.landing.title}</h1>
+          <p className="landing-lead">{copy.landing.lead}</p>
 
           <div className="landing-actions">
             <a className="landing-button landing-button--primary" href={DOWNLOAD_URL}>
-              Скачать приложение
+              {copy.landing.download}
             </a>
             <a className="landing-button landing-button--secondary" href="#try-online">
-              Открыть демо
+              {copy.landing.demo}
             </a>
           </div>
 
           <div className="landing-note">
-            <strong>Важно:</strong> настоящий always-on-top работает в desktop-версии. В браузере
-            таймер можно попробовать онлайн, но поверх всех приложений он держаться не сможет.
+            <strong>{copy.landing.notePrefix}</strong> {copy.landing.note}
           </div>
         </div>
 
@@ -539,13 +909,13 @@ function MarketingPage({ children }: { children: ReactNode }) {
             <div className="showcase-card">
               <div>
                 <p>Pomodoro</p>
-                <h2>Фокус</h2>
+                <h2>{copy.landing.showcaseMode}</h2>
               </div>
               <strong>24:47</strong>
               <div className="showcase-controls">
-                <span>Старт</span>
-                <span>Сброс</span>
-                <span>Пропуск</span>
+                <span>{copy.landing.showcaseStart}</span>
+                <span>{copy.landing.showcaseReset}</span>
+                <span>{copy.landing.showcaseSkip}</span>
               </div>
             </div>
           </div>
@@ -553,38 +923,27 @@ function MarketingPage({ children }: { children: ReactNode }) {
       </section>
 
       <section className="landing-feature-grid" aria-label="Возможности приложения">
-        <article>
-          <span>01</span>
-          <h2>Поверх экрана</h2>
-          <p>Desktop-режим превращает таймер в компактное always-on-top окно.</p>
-        </article>
-        <article>
-          <span>02</span>
-          <h2>Звук окончания</h2>
-          <p>Таймер играет мягкий синтезированный сигнал после завершения цикла.</p>
-        </article>
-        <article>
-          <span>03</span>
-          <h2>Счётчик дня</h2>
-          <p>Фокус-сессии считаются за текущий день и сбрасываются после 05:00.</p>
-        </article>
+        {copy.landing.features.map((feature, index) => (
+          <article key={feature.title}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <h2>{feature.title}</h2>
+            <p>{feature.text}</p>
+          </article>
+        ))}
       </section>
 
       <section className="landing-demo" id="try-online" aria-labelledby="demo-title">
         <div className="landing-demo-copy">
-          <p className="landing-kicker">Browser timer</p>
-          <h2 id="demo-title">Таймер в браузере</h2>
-          <p>
-            Это тот же таймер: фокус, короткий перерыв, длинный перерыв, звук и сохранение
-            состояния в браузере. Для настоящего окна поверх всех приложений скачай desktop app.
-          </p>
+          <p className="landing-kicker">{copy.landing.demoKicker}</p>
+          <h2 id="demo-title">{copy.landing.demoTitle}</h2>
+          <p>{copy.landing.demoText}</p>
         </div>
         {children}
       </section>
 
       <footer className="landing-footer">
         <a href={REPOSITORY_URL}>GitHub repository</a>
-        <span>React + TypeScript + Vite + Electron</span>
+        <span>{copy.landing.footerStack}</span>
       </footer>
     </div>
   );
@@ -595,10 +954,12 @@ export default function App() {
   const [timerState, setTimerState] = useState<TimerState>(() => readStoredState());
   const [miniModeEnabled, setMiniModeEnabled] = useState(false);
   const [completionCue, setCompletionCue] = useState<CompletionCue | null>(null);
+  const [language, setLanguage] = useState<Language>(() => readStoredLanguage());
 
   const channelRef = useRef<BroadcastChannel | null>(null);
   const lastSerializedRef = useRef(JSON.stringify(timerState));
   const completionCueIdRef = useRef(0);
+  const copy = COPY[language];
   const compactViewportEnabled = isDesktopApp && miniModeEnabled && completionCue === null;
 
   useEffect(() => {
@@ -690,6 +1051,11 @@ export default function App() {
   }, [compactViewportEnabled]);
 
   useEffect(() => {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+    document.documentElement.lang = language;
+  }, [language]);
+
+  useEffect(() => {
     const serialized = JSON.stringify(timerState);
     if (serialized === lastSerializedRef.current) {
       return;
@@ -763,10 +1129,12 @@ export default function App() {
   }, [completionCue, isDesktopApp, miniModeEnabled, timerState.secondsLeft]);
 
   const title = useMemo(() => {
-    if (timerState.mode === "focus") return "Фокус";
-    if (timerState.mode === "shortBreak") return "Короткий перерыв";
-    return "Длинный перерыв";
-  }, [timerState.mode]);
+    return copy.modes[timerState.mode];
+  }, [copy, timerState.mode]);
+
+  const toggleLanguage = () => {
+    setLanguage((current) => (current === "ru" ? "en" : "ru"));
+  };
 
   const dismissCompletionCue = () => {
     setCompletionCue(null);
@@ -861,13 +1229,9 @@ export default function App() {
       <TimerPanel
         mode={timerState.mode}
         title={title}
-        eyebrow={isDesktopApp ? "Desktop timer" : "Online demo"}
-        heading={isDesktopApp ? "Pomodoro Timer" : "Онлайн-таймер"}
-        subtitle={
-          isDesktopApp
-            ? "Переключай текущее окно в компактный always-on-top режим, когда нужен таймер без шума."
-            : "Браузерная версия таймера. Настоящий always-on-top доступен в desktop-приложении."
-        }
+        eyebrow={isDesktopApp ? copy.timer.desktopEyebrow : copy.timer.onlineEyebrow}
+        heading={isDesktopApp ? copy.timer.desktopHeading : copy.timer.onlineHeading}
+        subtitle={isDesktopApp ? copy.timer.desktopSubtitle : copy.timer.onlineSubtitle}
         secondsLeft={timerState.secondsLeft}
         isRunning={timerState.isRunning}
         completedPomodoros={timerState.completedPomodoros}
@@ -875,12 +1239,15 @@ export default function App() {
         isDesktopApp={isDesktopApp}
         miniModeEnabled={miniModeEnabled}
         showMiniModeControl={isDesktopApp && completionCue === null}
+        language={language}
+        copy={copy}
         onSwitchMode={switchMode}
         onStart={start}
         onPause={pause}
         onReset={reset}
         onSkip={skip}
         onToggleMiniMode={toggleMiniMode}
+        onToggleLanguage={toggleLanguage}
       />
   );
 
@@ -888,9 +1255,16 @@ export default function App() {
     return (
       <main className="container container--landing">
         {completionCue ? (
-          <CompletionOverlay key={completionCue.id} completedMode={completionCue.completedMode} />
+          <CompletionOverlay
+            key={completionCue.id}
+            completedMode={completionCue.completedMode}
+            copy={copy}
+            onContinue={start}
+          />
         ) : null}
-        <MarketingPage>{timerPanel}</MarketingPage>
+        <MarketingPage language={language} copy={copy} onToggleLanguage={toggleLanguage}>
+          {timerPanel}
+        </MarketingPage>
       </main>
     );
   }
@@ -902,7 +1276,12 @@ export default function App() {
       }`}
     >
       {completionCue ? (
-        <CompletionOverlay key={completionCue.id} completedMode={completionCue.completedMode} />
+        <CompletionOverlay
+          key={completionCue.id}
+          completedMode={completionCue.completedMode}
+          copy={copy}
+          onContinue={start}
+        />
       ) : null}
       {timerPanel}
     </main>
