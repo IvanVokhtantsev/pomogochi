@@ -1088,6 +1088,14 @@ function MarketingPage({
                 <h2>{copy.modes.shortBreak}</h2>
               </div>
 
+              <div className="showcase-compact-pomogochi" aria-hidden="true">
+                <div className="showcase-compact-pomogochi-core">
+                  <span className="showcase-compact-pomogochi-eye" />
+                  <span className="showcase-compact-pomogochi-eye" />
+                  <span className="showcase-compact-pomogochi-mouth" />
+                </div>
+              </div>
+
               <strong className="showcase-compact-time">05:00</strong>
 
               <div className="showcase-compact-matrix" aria-hidden="true">
