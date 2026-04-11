@@ -1060,9 +1060,11 @@ function MarketingPage({
               <div className="showcase-break-frame">
                 <div className="showcase-break-pomogochi">
                   <div className="showcase-break-pomogochi-core">
-                    <span className="showcase-break-eye" />
-                    <span className="showcase-break-eye" />
-                    <span className="showcase-break-mouth" />
+                    <span className="pomogochi-face">
+                      <span className="pomogochi-eye" />
+                      <span className="pomogochi-eye" />
+                      <span className="pomogochi-mouth" />
+                    </span>
                   </div>
                   <span className="showcase-break-orbit showcase-break-orbit--one" />
                   <span className="showcase-break-orbit showcase-break-orbit--two" />
@@ -1090,9 +1092,11 @@ function MarketingPage({
 
               <div className="showcase-compact-pomogochi" aria-hidden="true">
                 <div className="showcase-compact-pomogochi-core">
-                  <span className="showcase-compact-pomogochi-eye" />
-                  <span className="showcase-compact-pomogochi-eye" />
-                  <span className="showcase-compact-pomogochi-mouth" />
+                  <span className="pomogochi-face">
+                    <span className="pomogochi-eye" />
+                    <span className="pomogochi-eye" />
+                    <span className="pomogochi-mouth" />
+                  </span>
                 </div>
               </div>
 
