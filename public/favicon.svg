@@ -1,87 +1,61 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
-  <title id="title">Pomogochi icon</title>
-  <desc id="desc">A red Pomogochi sphere with soft highlights, tiny eyes, and a calm smile.</desc>
+  <title id="title">Pomogochi favicon</title>
+  <desc id="desc">A round red Pomogochi with bright highlights, tiny eyes, and a slightly unhappy mouth.</desc>
   <defs>
-    <linearGradient id="bg" x1="120" y1="82" x2="894" y2="944" gradientUnits="userSpaceOnUse">
+    <linearGradient id="bg" x1="140" y1="92" x2="908" y2="934" gradientUnits="userSpaceOnUse">
       <stop stop-color="#dbeafe" />
-      <stop offset="0.5" stop-color="#f8fafc" />
+      <stop offset="0.52" stop-color="#f8fafc" />
       <stop offset="1" stop-color="#ffe4e6" />
     </linearGradient>
-    <radialGradient id="body" cx="42%" cy="28%" r="72%">
-      <stop offset="0%" stop-color="#fb7185" />
-      <stop offset="55%" stop-color="#ef4444" />
-      <stop offset="100%" stop-color="#c81e1e" />
+    <radialGradient id="glow" cx="50%" cy="50%" r="54%">
+      <stop offset="0%" stop-color="#ff8b6a" stop-opacity="0.48" />
+      <stop offset="52%" stop-color="#ff5b2b" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#ff5b2b" stop-opacity="0" />
     </radialGradient>
-    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#fff7fb" stop-opacity="0.95" />
-      <stop offset="45%" stop-color="#ffe4ec" stop-opacity="0.42" />
-      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
-    </radialGradient>
-    <filter id="shadow" x="132" y="136" width="780" height="776" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
-      <feDropShadow dx="0" dy="34" flood-color="#0f172a" flood-opacity="0.22" stdDeviation="28" />
-    </filter>
-    <filter id="glow" x="178" y="184" width="688" height="680" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
-      <feGaussianBlur stdDeviation="22" />
+    <linearGradient id="body" x1="320" y1="262" x2="706" y2="798" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff7758" />
+      <stop offset="0.48" stop-color="#ff4d1a" />
+      <stop offset="1" stop-color="#cb3000" />
+    </linearGradient>
+    <filter id="softShadow" x="124" y="126" width="782" height="782" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="34" stdDeviation="26" flood-color="#0f172a" flood-opacity="0.2" />
     </filter>
   </defs>
 
   <rect width="1024" height="1024" rx="228" fill="url(#bg)" />
-  <circle cx="210" cy="202" r="148" fill="#ffffff" opacity="0.28" />
-  <circle cx="816" cy="240" r="184" fill="#ffffff" opacity="0.28" />
-  <circle cx="766" cy="800" r="238" fill="#ffffff" opacity="0.22" />
 
-  <g opacity="0.42" filter="url(#glow)">
-    <circle cx="522" cy="528" r="242" fill="#ef4444" />
+  <g opacity="0.92">
+    <circle cx="512" cy="548" r="286" fill="url(#glow)" />
   </g>
 
-  <g filter="url(#shadow)">
-    <circle cx="522" cy="528" r="228" fill="url(#body)" />
-    <ellipse cx="454" cy="394" rx="70" ry="100" transform="rotate(-34 454 394)" fill="#ffffff" opacity="0.24" />
-    <ellipse cx="688" cy="394" rx="58" ry="88" transform="rotate(26 688 394)" fill="#ffffff" opacity="0.22" />
-    <ellipse cx="570" cy="500" rx="72" ry="64" fill="url(#centerGlow)" />
+  <g filter="url(#softShadow)">
+    <circle cx="512" cy="534" r="238" fill="url(#body)" />
+    <ellipse cx="406" cy="392" rx="72" ry="100" transform="rotate(-30 406 392)" fill="#fff" opacity="0.24" />
+    <ellipse cx="652" cy="392" rx="72" ry="100" transform="rotate(30 652 392)" fill="#fff" opacity="0.24" />
 
     <ellipse
-      cx="520"
-      cy="520"
-      rx="268"
-      ry="168"
-      transform="rotate(26 520 520)"
+      cx="512"
+      cy="536"
+      rx="284"
+      ry="170"
+      transform="rotate(24 512 536)"
       fill="none"
       stroke="#ffffff"
       stroke-opacity="0.14"
       stroke-width="4"
     />
-    <ellipse
-      cx="520"
-      cy="520"
-      rx="202"
-      ry="124"
-      transform="rotate(26 520 520)"
-      fill="none"
-      stroke="#ffffff"
-      stroke-opacity="0.11"
-      stroke-width="3"
-    />
 
-    <circle cx="500" cy="534" r="18" fill="#374151" />
-    <circle cx="500" cy="534" r="7" fill="#111827" />
-    <circle cx="620" cy="534" r="18" fill="#374151" />
-    <circle cx="620" cy="534" r="7" fill="#111827" />
+    <circle cx="446" cy="538" r="22" fill="#334155" />
+    <circle cx="446" cy="538" r="10" fill="#111827" />
+    <circle cx="580" cy="538" r="22" fill="#334155" />
+    <circle cx="580" cy="538" r="10" fill="#111827" />
 
     <path
-      d="M534 620c14 10 38 10 52 0"
+      d="M470 676c18-16 66-16 84 0"
       fill="none"
-      stroke="#3f1820"
+      stroke="#3b1419"
       stroke-linecap="round"
       stroke-width="10"
-    />
-    <path
-      d="M528 614h64"
-      fill="none"
-      stroke="#3f1820"
-      stroke-linecap="round"
-      stroke-width="8"
-      opacity="0.92"
     />
   </g>
 </svg>

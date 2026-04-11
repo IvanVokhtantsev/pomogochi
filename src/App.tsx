@@ -1042,11 +1042,39 @@ function MarketingPage({
         </div>
 
         <div className="landing-showcase" aria-label="Превью компактного режима">
-          <div className="showcase-window showcase-window--back">
-            <span />
-            <span />
-            <span />
+          <div className="showcase-break-card">
+            <div className="showcase-break-copy">
+              <p>{copy.pomogochi.kicker}</p>
+              <h2>{copy.pomogochi.shortTitle}</h2>
+              <span>{copy.pomogochi.shortMessage}</span>
+
+              <div className="showcase-break-countdown">
+                <small>{copy.pomogochi.remaining}</small>
+                <strong>04:39</strong>
+              </div>
+
+              <em>{copy.pomogochi.helper}</em>
+            </div>
+
+            <div className="showcase-break-stage" aria-hidden="true">
+              <div className="showcase-break-frame">
+                <div className="showcase-break-pomogochi">
+                  <div className="showcase-break-pomogochi-core">
+                    <span className="showcase-break-eye" />
+                    <span className="showcase-break-eye" />
+                    <span className="showcase-break-mouth" />
+                  </div>
+                  <span className="showcase-break-orbit showcase-break-orbit--one" />
+                  <span className="showcase-break-orbit showcase-break-orbit--two" />
+                </div>
+              </div>
+            </div>
+
+            <button className="showcase-break-skip" type="button">
+              {copy.pomogochi.skip}
+            </button>
           </div>
+
           <div className="showcase-window">
             <div className="showcase-titlebar">
               <span />
@@ -1061,16 +1089,6 @@ function MarketingPage({
               </div>
 
               <strong className="showcase-compact-time">05:00</strong>
-
-              <div className="showcase-pomogochi" aria-hidden="true">
-                <div className="showcase-pomogochi-core">
-                  <span className="showcase-pomogochi-eye" />
-                  <span className="showcase-pomogochi-eye" />
-                  <span className="showcase-pomogochi-mouth" />
-                </div>
-                <span className="showcase-pomogochi-orbit showcase-pomogochi-orbit--one" />
-                <span className="showcase-pomogochi-orbit showcase-pomogochi-orbit--two" />
-              </div>
 
               <div className="showcase-compact-matrix" aria-hidden="true">
                 <span className="showcase-mini-pill">{copy.timer.compactPause}</span>
