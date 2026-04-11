@@ -1,7 +1,7 @@
 {
   "name": "pomogochi",
   "private": true,
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Pomogochi is a desktop Pomodoro timer with an always-on-top compact mode and a full-screen break companion.",
   "author": "Ivan Vokhtantsev",
   "repository": {

@@ -156,9 +156,9 @@ const COPY = {
       running: "Идёт",
       paused: "Пауза",
       runningShort: "●",
-      pausedShort: "Ⅱ",
+      pausedShort: "II",
       compactStart: "▶",
-      compactPause: "Ⅱ",
+      compactPause: "II",
       compactReset: "↺",
       compactSkip: "»",
     },
@@ -254,9 +254,9 @@ const COPY = {
       running: "Running",
       paused: "Paused",
       runningShort: "●",
-      pausedShort: "Ⅱ",
+      pausedShort: "II",
       compactStart: "▶",
-      compactPause: "Ⅱ",
+      compactPause: "II",
       compactReset: "↺",
       compactSkip: "»",
     },
@@ -700,61 +700,34 @@ function PomogochiBreakOverlay({
   copy: AppCopy;
   onSkip: () => void;
 }) {
-  const AGITATION_DECAY_MS = 6400;
-  const POINTER_ACTIVITY_DISTANCE = 18;
-  const POINTER_ACTIVITY_THROTTLE_MS = 120;
+  const CLICK_PENALTY_STEP = 0.18;
+  const CLICK_PENALTY_DECAY = 0.012;
   const isLongBreak = mode === "longBreak";
   const [reactionCount, setReactionCount] = useState(0);
-  const [activityTick, setActivityTick] = useState(() => Date.now());
-  const [lastActivityAt, setLastActivityAt] = useState<number | null>(null);
-  const pointerActivityRef = useRef<{ x: number; y: number; at: number } | null>(null);
-  const reactionBubbles = reactionCount > 0 ? Array.from({ length: 7 }) : [];
-  const agitation =
-    lastActivityAt === null
-      ? 0
-      : Math.min(1, Math.max(0, 1 - (activityTick - lastActivityAt) / AGITATION_DECAY_MS));
-  const calmProgress = 1 - agitation;
+  const [clickPenalty, setClickPenalty] = useState(0);
+  const agitation = clickPenalty;
+  const easedAgitation = agitation * agitation * (3 - 2 * agitation);
+  const calmProgress = 1 - easedAgitation;
   const petStyle = {
     "--agitation": agitation.toFixed(2),
-    "--pomogochi-hue": `${Math.round(10 + calmProgress * 128)}`,
-    "--pomogochi-shake": `${(agitation * 10).toFixed(2)}px`,
-    "--pomogochi-shake-duration": `${Math.round(560 - agitation * 360)}ms`,
-    "--pomogochi-blur": `${(agitation * 0.8).toFixed(2)}px`,
+    "--pomogochi-hue": `${(10 + calmProgress * 128).toFixed(2)}`,
+    "--pomogochi-shake": `${(agitation * 5.5).toFixed(2)}px`,
+    "--pomogochi-shake-duration": `${Math.round(1260 - agitation * 360)}ms`,
+    "--pomogochi-blur": `${(agitation * 0.5).toFixed(2)}px`,
+    "--pomogochi-glow-alpha": `${(0.2 + easedAgitation * 0.24).toFixed(2)}`,
+    "--pomogochi-orbit-alpha": `${(0.16 + easedAgitation * 0.14).toFixed(2)}`,
+    "--pomogochi-glow-scale": `${(0.92 + easedAgitation * 0.12).toFixed(2)}`,
   } as CSSProperties;
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
-      setActivityTick(Date.now());
-    }, 250);
+      setClickPenalty((current) => (current > 0 ? Math.max(0, current - CLICK_PENALTY_DECAY) : current));
+    }, 100);
 
     return () => {
       window.clearInterval(intervalId);
     };
   }, []);
-
-  const registerPetActivity = () => {
-    const timestamp = Date.now();
-    setLastActivityAt(timestamp);
-    setActivityTick(timestamp);
-  };
-
-  const registerCursorActivity = (clientX: number, clientY: number) => {
-    const timestamp = Date.now();
-    const lastPointerActivity = pointerActivityRef.current;
-
-    if (lastPointerActivity) {
-      const distance = Math.hypot(clientX - lastPointerActivity.x, clientY - lastPointerActivity.y);
-      const elapsed = timestamp - lastPointerActivity.at;
-
-      if (distance < POINTER_ACTIVITY_DISTANCE && elapsed < POINTER_ACTIVITY_THROTTLE_MS) {
-        return;
-      }
-    }
-
-    pointerActivityRef.current = { x: clientX, y: clientY, at: timestamp };
-    setLastActivityAt(timestamp);
-    setActivityTick(timestamp);
-  };
 
   return (
     <div
@@ -762,9 +735,6 @@ function PomogochiBreakOverlay({
       aria-label={copy.pomogochi.aria}
       aria-modal="true"
       role="dialog"
-      onPointerMove={(event) => {
-        registerCursorActivity(event.clientX, event.clientY);
-      }}
     >
       <div className="pomogochi-card">
         <div className="pomogochi-copy">
@@ -783,8 +753,8 @@ function PomogochiBreakOverlay({
           type="button"
           aria-label={copy.pomogochi.petAction}
           onClick={() => {
-            registerPetActivity();
             setReactionCount((count) => count + 1);
+            setClickPenalty((current) => Math.min(1, current + CLICK_PENALTY_STEP));
           }}
         >
           <div
@@ -805,19 +775,6 @@ function PomogochiBreakOverlay({
               </span>
             </div>
           </div>
-          {reactionBubbles.map((_, index) => (
-            <span
-              key={`${reactionCount}-${index}`}
-              className="pomogochi-bubble"
-              style={
-                {
-                  "--bubble-x": `${(index - 3) * 24}px`,
-                  "--bubble-delay": `${index * 34}ms`,
-                  "--bubble-size": `${12 + (index % 3) * 5}px`,
-                } as CSSProperties
-              }
-            />
-          ))}
           <span className="pomogochi-orbit pomogochi-orbit--one" />
           <span className="pomogochi-orbit pomogochi-orbit--two" />
         </button>
@@ -873,8 +830,8 @@ function TimerPanel({
             >
               {isRunning ? copy.timer.runningShort : copy.timer.pausedShort}
             </span>
-            <span className="compact-stats" title={`${copy.timer.today} ${completedPomodoros}`}>
-              {copy.timer.todayCompact} {completedPomodoros}
+            <span className="compact-stats" title={`${copy.timer.completedToday}: ${completedPomodoros}`}>
+              {completedPomodoros}
             </span>
             {onToggleMiniMode ? (
               <button
@@ -1105,12 +1062,22 @@ function MarketingPage({
 
               <strong className="showcase-compact-time">05:00</strong>
 
+              <div className="showcase-pomogochi" aria-hidden="true">
+                <div className="showcase-pomogochi-core">
+                  <span className="showcase-pomogochi-eye" />
+                  <span className="showcase-pomogochi-eye" />
+                  <span className="showcase-pomogochi-mouth" />
+                </div>
+                <span className="showcase-pomogochi-orbit showcase-pomogochi-orbit--one" />
+                <span className="showcase-pomogochi-orbit showcase-pomogochi-orbit--two" />
+              </div>
+
               <div className="showcase-compact-matrix" aria-hidden="true">
-                <span className="showcase-mini-pill">Ⅱ</span>
-                <span className="showcase-mini-pill showcase-mini-pill--text">
-                  {copy.timer.todayCompact} 8
+                <span className="showcase-mini-pill">{copy.timer.compactPause}</span>
+                <span className="showcase-mini-count">8</span>
+                <span className="showcase-mini-button showcase-mini-button--ghost">
+                  ↗
                 </span>
-                <span className="showcase-mini-button showcase-mini-button--ghost">↗</span>
 
                 <span className="showcase-mini-button">F</span>
                 <span className="showcase-mini-button showcase-mini-button--active">S</span>
@@ -1497,9 +1464,11 @@ export default function App() {
             onContinue={start}
           />
         ) : null}
-        <MarketingPage language={language} copy={copy} onToggleLanguage={toggleLanguage}>
-          {timerPanel}
-        </MarketingPage>
+        {!pomogochiActive ? (
+          <MarketingPage language={language} copy={copy} onToggleLanguage={toggleLanguage}>
+            {timerPanel}
+          </MarketingPage>
+        ) : null}
       </main>
     );
   }
@@ -1519,7 +1488,7 @@ export default function App() {
           onContinue={start}
         />
       ) : null}
-      {timerPanel}
+      {!pomogochiActive ? timerPanel : null}
     </main>
   );
 }

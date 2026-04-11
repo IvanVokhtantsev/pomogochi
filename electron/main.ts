@@ -128,7 +128,19 @@ function enterTimerAttentionMode() {
 
   window.show();
   window.focus();
+  window.webContents.focus();
   window.moveTop();
+
+  setTimeout(() => {
+    if (window.isDestroyed()) {
+      return;
+    }
+
+    window.show();
+    window.focus();
+    window.webContents.focus();
+    window.moveTop();
+  }, 280);
 }
 
 function restoreFromTimerAttentionMode() {
