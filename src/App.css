@@ -378,6 +378,10 @@ body.compact-viewport #root {
   letter-spacing: -0.07em;
 }
 
+.showcase-break-title span {
+  display: block;
+}
+
 .showcase-break-copy span {
   display: block;
   max-width: 260px;
@@ -553,6 +557,10 @@ body.compact-viewport #root {
   line-height: 0.94;
 }
 
+.showcase-compact-brand h2 span {
+  display: block;
+}
+
 .showcase-compact-pomogochi {
   position: absolute;
   left: 92px;
@@ -603,7 +611,7 @@ body.compact-viewport #root {
   grid-row: 2;
   align-self: start;
   margin-top: 0;
-  font-size: clamp(34px, 4.4vw, 52px);
+  font-size: clamp(38px, 4.8vw, 56px);
   text-align: left;
   font-variant-numeric: tabular-nums;
 }
@@ -657,7 +665,7 @@ body.compact-viewport #root {
 .showcase-mini-button {
   width: 28px;
   height: 28px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 780;
   letter-spacing: -0.03em;
 }

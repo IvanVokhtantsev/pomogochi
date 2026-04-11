@@ -1004,6 +1004,11 @@ function MarketingPage({
   copy: AppCopy;
   onToggleLanguage: () => void;
 }) {
+  const showcaseBreakTitleLines =
+    language === "ru" ? ["Pomogochi", "зовёт на 5", "минут"] : ["Pomogochi", "wants 5", "minutes"];
+  const showcaseCompactTitleLines =
+    language === "ru" ? ["Короткий", "перерыв"] : ["Short", "break"];
+
   return (
     <div className="landing">
       <section className="landing-hero" aria-labelledby="landing-title">
@@ -1045,7 +1050,11 @@ function MarketingPage({
           <div className="showcase-break-card">
             <div className="showcase-break-copy">
               <p>{copy.pomogochi.kicker}</p>
-              <h2>{copy.pomogochi.shortTitle}</h2>
+              <h2 className="showcase-break-title">
+                {showcaseBreakTitleLines.map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
+              </h2>
               <span>{copy.pomogochi.shortMessage}</span>
 
               <div className="showcase-break-countdown">
@@ -1087,7 +1096,11 @@ function MarketingPage({
             <div className="showcase-card showcase-card--compact">
               <div className="showcase-compact-brand">
                 <p>Pomogochi</p>
-                <h2>{copy.modes.shortBreak}</h2>
+                <h2>
+                  {showcaseCompactTitleLines.map((line) => (
+                    <span key={line}>{line}</span>
+                  ))}
+                </h2>
               </div>
 
               <div className="showcase-compact-pomogochi" aria-hidden="true">
