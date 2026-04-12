@@ -238,12 +238,13 @@ body.compact-viewport #root {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 18px;
-  padding: 18px 0 0 34px;
+  gap: 0;
+  padding: 10px 0 0 34px;
 }
 
 .showcase-poster {
   margin: 0;
+  position: relative;
 }
 
 .showcase-poster img {
@@ -252,16 +253,24 @@ body.compact-viewport #root {
   height: auto;
   user-select: none;
   -webkit-user-drag: none;
+  border-radius: 26px;
+  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.2);
 }
 
 .showcase-poster--break {
-  width: min(100%, 462px);
+  width: min(100%, 560px);
+  z-index: 1;
+  transform: rotate(1.2deg);
+  transform-origin: 62% 48%;
 }
 
 .showcase-poster--compact {
-  width: min(62%, 412px);
-  margin-top: -38px;
-  margin-right: 132px;
+  width: min(72%, 430px);
+  margin-top: -128px;
+  margin-right: 84px;
+  z-index: 2;
+  transform: rotate(-4.8deg);
+  transform-origin: 50% 50%;
 }
 
 .showcase-window {
@@ -1998,6 +2007,7 @@ h1 {
   .showcase-poster--compact {
     width: min(100%, 420px);
     margin: 0;
+    transform: none;
   }
 
   .landing-feature-grid {
@@ -2098,6 +2108,7 @@ h1 {
   .showcase-poster--compact {
     width: 100%;
     margin: 0;
+    transform: none;
   }
 
   .landing-demo {

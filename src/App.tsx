@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
-import landingBreakPreviewRu from "./assets/landing-break-preview.svg";
-import landingCompactPreviewRu from "./assets/landing-compact-preview.svg";
-import landingBreakPreviewEn from "./assets/landing-break-preview-en.svg";
-import landingCompactPreviewEn from "./assets/landing-compact-preview-en.svg";
+import landingBreakPreviewRu from "./assets/landing-break-preview-ru.png";
+import landingCompactPreviewRu from "./assets/landing-compact-preview-ru.png";
+import landingBreakPreviewEn from "./assets/landing-break-preview-en.png";
+import landingCompactPreviewEn from "./assets/landing-compact-preview-en.png";
 import "./App.css";
 
 type Mode = "focus" | "shortBreak" | "longBreak";
