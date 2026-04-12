@@ -254,7 +254,7 @@ body.compact-viewport #root {
   user-select: none;
   -webkit-user-drag: none;
   border-radius: 20px;
-  box-shadow: 0 28px 60px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.16);
 }
 
 .showcase-poster--break {
