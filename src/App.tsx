@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
+import landingBreakPreview from "./assets/landing-break-preview.svg";
+import landingCompactPreview from "./assets/landing-compact-preview.svg";
 import "./App.css";
 
 type Mode = "focus" | "shortBreak" | "longBreak";
@@ -1004,11 +1006,6 @@ function MarketingPage({
   copy: AppCopy;
   onToggleLanguage: () => void;
 }) {
-  const showcaseBreakTitleLines =
-    language === "ru" ? ["Pomogochi", "зовёт на 5", "минут"] : ["Pomogochi", "wants 5", "minutes"];
-  const showcaseCompactTitleLines =
-    language === "ru" ? ["Короткий", "перерыв"] : ["Short", "break"];
-
   return (
     <div className="landing">
       <section className="landing-hero" aria-labelledby="landing-title">
@@ -1047,93 +1044,13 @@ function MarketingPage({
         </div>
 
         <div className="landing-showcase" aria-label="Превью компактного режима">
-          <div className="showcase-break-card">
-            <div className="showcase-break-copy">
-              <p>{copy.pomogochi.kicker}</p>
-              <h2 className="showcase-break-title">
-                {showcaseBreakTitleLines.map((line) => (
-                  <span key={line}>{line}</span>
-                ))}
-              </h2>
-              <span>{copy.pomogochi.shortMessage}</span>
+          <figure className="showcase-poster showcase-poster--break">
+            <img src={landingBreakPreview} alt={copy.pomogochi.shortTitle} />
+          </figure>
 
-              <div className="showcase-break-countdown">
-                <small>{copy.pomogochi.remaining}</small>
-                <strong>04:39</strong>
-              </div>
-
-              <em>{copy.pomogochi.helper}</em>
-            </div>
-
-            <div className="showcase-break-stage" aria-hidden="true">
-              <div className="showcase-break-frame">
-                <div className="showcase-break-pomogochi">
-                  <div className="showcase-break-pomogochi-core">
-                    <span className="pomogochi-face">
-                      <span className="pomogochi-eye" />
-                      <span className="pomogochi-eye" />
-                      <span className="pomogochi-mouth" />
-                    </span>
-                  </div>
-                  <span className="showcase-break-orbit showcase-break-orbit--one" />
-                  <span className="showcase-break-orbit showcase-break-orbit--two" />
-                </div>
-              </div>
-            </div>
-
-            <button className="showcase-break-skip" type="button">
-              {copy.pomogochi.skip}
-            </button>
-          </div>
-
-          <div className="showcase-window">
-            <div className="showcase-titlebar">
-              <span />
-              <span />
-              <span />
-              <strong>24:47 • Compact</strong>
-            </div>
-            <div className="showcase-card showcase-card--compact">
-              <div className="showcase-compact-brand">
-                <p>Pomogochi</p>
-                <h2>
-                  {showcaseCompactTitleLines.map((line) => (
-                    <span key={line}>{line}</span>
-                  ))}
-                </h2>
-              </div>
-
-              <div className="showcase-compact-pomogochi" aria-hidden="true">
-                <div className="showcase-compact-pomogochi-core">
-                  <span className="pomogochi-face">
-                    <span className="pomogochi-eye" />
-                    <span className="pomogochi-eye" />
-                    <span className="pomogochi-mouth" />
-                  </span>
-                </div>
-              </div>
-
-              <strong className="showcase-compact-time">05:00</strong>
-
-              <div className="showcase-compact-matrix" aria-hidden="true">
-                <span className="showcase-mini-pill">{copy.timer.compactPause}</span>
-                <span className="showcase-mini-count">8</span>
-                <span className="showcase-mini-button showcase-mini-button--ghost">
-                  ↗
-                </span>
-
-                <span className="showcase-mini-button">F</span>
-                <span className="showcase-mini-button showcase-mini-button--active">S</span>
-                <span className="showcase-mini-button">L</span>
-
-                <span className="showcase-mini-button showcase-mini-button--primary">
-                  {copy.timer.compactStart}
-                </span>
-                <span className="showcase-mini-button">{copy.timer.compactReset}</span>
-                <span className="showcase-mini-button">{copy.timer.compactSkip}</span>
-              </div>
-            </div>
-          </div>
+          <figure className="showcase-poster showcase-poster--compact">
+            <img src={landingCompactPreview} alt={copy.modes.shortBreak} />
+          </figure>
         </div>
       </section>
 

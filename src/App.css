@@ -234,7 +234,34 @@ body.compact-viewport #root {
 
 .landing-showcase {
   position: relative;
-  min-height: 720px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 18px;
+  padding: 18px 0 0 34px;
+}
+
+.showcase-poster {
+  margin: 0;
+}
+
+.showcase-poster img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.showcase-poster--break {
+  width: min(100%, 462px);
+}
+
+.showcase-poster--compact {
+  width: min(62%, 412px);
+  margin-top: -38px;
+  margin-right: 132px;
 }
 
 .showcase-window {
@@ -1961,29 +1988,16 @@ h1 {
   }
 
   .landing-showcase {
-    min-height: 620px;
+    min-height: 0;
+    padding: 0;
+    align-items: center;
+    gap: 14px;
   }
 
-  .showcase-break-card {
-    position: relative;
-    inset: auto;
-    grid-template-columns: 1fr;
-    padding: 24px 20px 62px;
-  }
-
-  .showcase-break-copy h2 {
-    font-size: clamp(40px, 10vw, 64px);
-  }
-
-  .showcase-break-frame {
-    width: min(100%, 300px);
-  }
-
-  .showcase-window {
-    left: 10px;
-    bottom: 0;
-    width: min(88%, 360px);
-    transform: rotate(-1deg);
+  .showcase-poster--break,
+  .showcase-poster--compact {
+    width: min(100%, 420px);
+    margin: 0;
   }
 
   .landing-feature-grid {
@@ -2075,113 +2089,15 @@ h1 {
   }
 
   .landing-showcase {
-    min-height: 560px;
-  }
-
-  .showcase-window {
-    left: 0;
-    bottom: 6px;
-    width: min(92%, 320px);
-    border-radius: 18px;
-  }
-
-  .showcase-titlebar {
-    height: 34px;
-    padding: 0 12px;
-    font-size: 10px;
-  }
-
-  .showcase-card {
-    padding: 18px;
+    min-height: 0;
+    padding: 0;
     gap: 12px;
   }
 
-  .showcase-card h2 {
-    font-size: 24px;
-  }
-
-  .showcase-card--compact {
-    gap: 14px 12px;
-  }
-
-  .showcase-break-card {
-    padding: 18px 16px 58px;
-    border-radius: 24px;
-  }
-
-  .showcase-break-card::before {
-    inset: 14px;
-    border-radius: 18px;
-  }
-
-  .showcase-break-copy h2 {
-    font-size: clamp(34px, 12vw, 52px);
-  }
-
-  .showcase-break-copy span {
-    font-size: 14px;
-    margin-top: 16px;
-  }
-
-  .showcase-break-countdown {
-    margin-top: 20px;
-    padding: 12px 16px 14px;
-  }
-
-  .showcase-break-countdown strong {
-    font-size: clamp(54px, 18vw, 78px);
-  }
-
-  .showcase-break-copy em {
-    font-size: 12px;
-  }
-
-  .showcase-break-frame {
-    width: min(100%, 240px);
-    border-width: 3px;
-    border-radius: 28px;
-  }
-
-  .showcase-break-pomogochi {
-    width: min(100%, 200px);
-  }
-
-  .showcase-compact-brand p {
-    font-size: 9px;
-  }
-
-  .showcase-compact-brand h2 {
-    font-size: 22px;
-  }
-
-  .showcase-compact-time {
-    font-size: clamp(58px, 17vw, 88px);
-  }
-
-  .showcase-compact-matrix {
-    grid-template-columns: repeat(3, 34px);
-    grid-template-rows: repeat(3, 34px);
-    gap: 6px;
-  }
-
-  .showcase-mini-pill,
-  .showcase-mini-button {
-    width: 34px;
-    height: 34px;
-  }
-
-  .showcase-mini-pill {
-    font-size: 13px;
-  }
-
-  .showcase-mini-count {
-    width: 34px;
-    height: 34px;
-    font-size: 10px;
-  }
-
-  .showcase-mini-button {
-    font-size: 12px;
+  .showcase-poster--break,
+  .showcase-poster--compact {
+    width: 100%;
+    margin: 0;
   }
 
   .landing-demo {
