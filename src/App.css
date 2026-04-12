@@ -264,6 +264,10 @@ body.compact-viewport #root {
   transform-origin: 62% 48%;
 }
 
+.showcase-poster--break img {
+  border-radius: 38px;
+}
+
 .showcase-poster--compact {
   width: min(72%, 430px);
   margin-top: -128px;
