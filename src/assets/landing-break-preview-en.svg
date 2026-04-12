@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="760" viewBox="0 0 960 760" role="img" aria-labelledby="title desc">
-  <title id="title">Pomogochi break preview Russian</title>
-  <desc id="desc">Русский промо-скрин экрана перерыва Pomogochi.</desc>
+  <title id="title">Pomogochi break preview English</title>
+  <desc id="desc">English promo screenshot for the Pomogochi break screen.</desc>
   <defs>
     <linearGradient id="bg" x1="100" y1="82" x2="876" y2="676" gradientUnits="userSpaceOnUse">
       <stop stop-color="#17314d"/>
@@ -44,20 +44,20 @@
   <text x="138" y="140" fill="#cbd5e1" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="20" font-weight="800" letter-spacing="7">POMOGOCHI BREAK</text>
 
   <text x="138" y="236" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="74" font-weight="800" letter-spacing="-5">Pomogochi</text>
-  <text x="138" y="316" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="74" font-weight="800" letter-spacing="-5">зовёт на 5</text>
-  <text x="138" y="396" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="74" font-weight="800" letter-spacing="-5">минут</text>
+  <text x="138" y="316" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="74" font-weight="800" letter-spacing="-5">wants 5</text>
+  <text x="138" y="396" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="74" font-weight="800" letter-spacing="-5">minutes</text>
 
-  <text x="138" y="472" fill="rgba(226,232,240,.82)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="27" font-weight="600">Отведи взгляд, расправь плечи,</text>
-  <text x="138" y="508" fill="rgba(226,232,240,.82)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="27" font-weight="600">дай голове выдохнуть.</text>
+  <text x="138" y="472" fill="rgba(226,232,240,.82)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="27" font-weight="600">Look away, stretch your shoulders,</text>
+  <text x="138" y="508" fill="rgba(226,232,240,.82)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="27" font-weight="600">and let your brain breathe.</text>
 
   <g>
     <rect x="138" y="560" width="282" height="142" rx="28" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.16)"/>
-    <text x="170" y="602" fill="rgba(226,232,240,.72)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" font-weight="800" letter-spacing="3">ОСТАЛОСЬ</text>
-    <text x="166" y="686" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="92" font-weight="800" letter-spacing="-6">04:51</text>
+    <text x="170" y="602" fill="rgba(226,232,240,.72)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="17" font-weight="800" letter-spacing="3">REMAINING</text>
+    <text x="166" y="686" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="92" font-weight="800" letter-spacing="-6">03:55</text>
   </g>
 
-  <text x="138" y="734" fill="rgba(203,213,225,.68)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" font-weight="600">Когда перерыв закончится, следующий фокус</text>
-  <text x="138" y="760" fill="rgba(203,213,225,.68)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" font-weight="600">начнётся автоматически.</text>
+  <text x="138" y="734" fill="rgba(203,213,225,.68)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" font-weight="600">When the break ends, the next focus cycle starts</text>
+  <text x="138" y="760" fill="rgba(203,213,225,.68)" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" font-weight="600">automatically.</text>
 
   <g filter="url(#pomShadow)">
     <ellipse cx="602" cy="430" rx="160" ry="178" fill="url(#pomBody)"/>
@@ -73,7 +73,7 @@
   </g>
 
   <g>
-    <rect x="660" y="650" width="170" height="52" rx="26" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)"/>
-    <text x="745" y="683" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="19" font-weight="760">Пропустить перерыв</text>
+    <rect x="682" y="650" width="148" height="52" rx="26" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)"/>
+    <text x="756" y="683" text-anchor="middle" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="19" font-weight="760">Skip break</text>
   </g>
 </svg>

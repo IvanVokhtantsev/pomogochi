@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
-import landingBreakPreview from "./assets/landing-break-preview.svg";
-import landingCompactPreview from "./assets/landing-compact-preview.svg";
+import landingBreakPreviewRu from "./assets/landing-break-preview.svg";
+import landingCompactPreviewRu from "./assets/landing-compact-preview.svg";
+import landingBreakPreviewEn from "./assets/landing-break-preview-en.svg";
+import landingCompactPreviewEn from "./assets/landing-compact-preview-en.svg";
 import "./App.css";
 
 type Mode = "focus" | "shortBreak" | "longBreak";
@@ -1006,6 +1008,10 @@ function MarketingPage({
   copy: AppCopy;
   onToggleLanguage: () => void;
 }) {
+  const landingBreakPreview = language === "ru" ? landingBreakPreviewRu : landingBreakPreviewEn;
+  const landingCompactPreview =
+    language === "ru" ? landingCompactPreviewRu : landingCompactPreviewEn;
+
   return (
     <div className="landing">
       <section className="landing-hero" aria-labelledby="landing-title">
