@@ -1019,7 +1019,7 @@ function MarketingPage({
 }) {
   const landingBreakPreview = language === "ru" ? landingBreakPreviewRu : landingBreakPreviewEn;
   const landingCompactPreview =
-    language === "ru" ? landingCompactPreviewEn : landingCompactPreviewRu;
+    language === "ru" ? landingCompactPreviewRu : landingCompactPreviewEn;
 
   return (
     <div className="landing">
