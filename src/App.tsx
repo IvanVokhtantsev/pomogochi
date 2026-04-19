@@ -84,6 +84,7 @@ const LEGACY_LANGUAGE_STORAGE_KEY = "pomodoro_language_v1";
 const SYNC_CHANNEL = "pomogochi_sync_v1";
 const DOWNLOAD_URL = "https://github.com/IvanVokhtantsev/pomogochi/releases/latest";
 const REPOSITORY_URL = "https://github.com/IvanVokhtantsev/pomogochi";
+const BOOSTY_URL = "https://boosty.to/pomogochi/donate";
 const WINDOW_ID =
   typeof crypto !== "undefined" && "randomUUID" in crypto
     ? crypto.randomUUID()
@@ -129,6 +130,10 @@ const COPY = {
       demoTitle: "Таймер в браузере",
       demoText:
         "Это онлайн-демо с фокусом, перерывами и сохранением состояния. Для окна поверх всех приложений и полноэкранного Pomogochi скачай desktop app.",
+      supportTitle: "💛 Поддержка проекта",
+      supportText:
+        "Помогочи развивается благодаря людям, которым он помогает фокусироваться. Если хочешь повлиять на развитие — можно присоединиться.",
+      supportButton: "👉 Поддержать на Boosty",
       footerStack: "React + TypeScript + Vite + Electron",
     },
     timer: {
@@ -227,6 +232,10 @@ const COPY = {
       demoTitle: "Try it online",
       demoText:
         "This online demo includes focus, breaks, and saved state. Download the desktop app for true always-on-top and the full Pomogochi break screen.",
+      supportTitle: "Support the project",
+      supportText:
+        "Pomogochi grows thanks to people it helps stay focused. If you want to shape where it goes next, you can join in.",
+      supportButton: "Support on Boosty",
       footerStack: "React + TypeScript + Vite + Electron",
     },
     timer: {
@@ -1078,6 +1087,24 @@ function MarketingPage({
         </div>
         {children}
       </section>
+
+      {language === "ru" ? (
+        <section className="landing-support" aria-labelledby="support-title">
+          <div className="landing-support-copy">
+            <p className="landing-kicker">{copy.landing.kicker}</p>
+            <h2 id="support-title">{copy.landing.supportTitle}</h2>
+            <p>{copy.landing.supportText}</p>
+          </div>
+          <a
+            className="landing-button landing-button--primary landing-support-button"
+            href={BOOSTY_URL}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {copy.landing.supportButton}
+          </a>
+        </section>
+      ) : null}
 
       <footer className="landing-footer">
         <a href={REPOSITORY_URL}>GitHub repository</a>

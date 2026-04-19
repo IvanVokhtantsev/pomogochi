@@ -820,6 +820,47 @@ body.compact-viewport #root {
   max-height: none;
 }
 
+.landing-support {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 24px 28px;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow:
+    0 22px 55px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px) saturate(165%);
+  -webkit-backdrop-filter: blur(24px) saturate(165%);
+}
+
+.landing-support-copy {
+  text-align: left;
+}
+
+.landing-support-copy h2 {
+  margin: 0 0 10px;
+  color: rgba(15, 23, 42, 0.95);
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.landing-support-copy p:last-child {
+  margin: 0;
+  max-width: 700px;
+  color: rgba(51, 65, 85, 0.88);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.landing-support-button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .landing-footer {
   display: flex;
   justify-content: space-between;
@@ -2018,6 +2059,11 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .landing-support {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .pomogochi-card {
     grid-template-columns: 1fr;
     min-height: auto;
@@ -2117,6 +2163,23 @@ h1 {
 
   .landing-demo {
     padding: 18px 12px;
+  }
+
+  .landing-support {
+    padding: 20px 16px;
+    border-radius: 22px;
+  }
+
+  .landing-support-copy h2 {
+    font-size: clamp(26px, 9vw, 34px);
+  }
+
+  .landing-support-copy p:last-child {
+    font-size: 15px;
+  }
+
+  .landing-support-button {
+    width: 100%;
   }
 
   .landing-footer {
